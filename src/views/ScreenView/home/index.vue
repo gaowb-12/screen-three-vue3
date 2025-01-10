@@ -27,9 +27,9 @@ import RightBottom from "./right-bottom.vue";
         <!-- <LeftBottom /> -->
       </ItemWrap>
     </div>
-    <div class="contetn_center">
+    <div class="content-center">
       <CenterMap class="contetn_center_top" title="设备分布图" />
-      <ItemWrap class="contetn_center-bottom" title="安装计划">
+      <ItemWrap class="content-center-bottom" title="安装计划">
         <!-- <CenterBottom /> -->
       </ItemWrap>
     </div>
@@ -64,17 +64,17 @@ import RightBottom from "./right-bottom.vue";
   flex-direction: column;
   justify-content: space-around;
   position: relative;
-  width: 540px;
+  width: 460px;
   box-sizing: border-box;
   flex-shrink: 0;
 }
-.contetn_center {
+.content-center {
   flex: 1;
-  margin: 0 54px;
+  margin: 0 30px;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  .contetn_center-bottom {
+  .content-center-bottom {
     height: 315px;
   }
 }

@@ -3,4 +3,8 @@ declare module "*.vue" {
   const Component: ReturnType<typeof defineComponent>;
   export default Component;
 }
+declare module "*.glsl" {
+  const shader: string;
+  export default shader;
+}
 

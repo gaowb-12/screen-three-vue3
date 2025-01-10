@@ -209,7 +209,12 @@ export const DELETE = async (url: string, params: Params) => {
     return Promise.reject(error);
   }
 };
+interface Options {
+  url: string,
+  data?: any,
+  params: any,
 
+}
 // switch (error.response?.status) {
 //     case 400:
 //       error.message = '请求错误(400)';

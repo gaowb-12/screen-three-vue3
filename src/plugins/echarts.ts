@@ -1,5 +1,6 @@
 // vue-echarts
 import ECharts from 'vue-echarts'
+import 'echarts-gl'
 import { use } from "echarts/core"
 import {
     CanvasRenderer
@@ -14,6 +15,8 @@ import {
     LegendComponent,
     DatasetComponent,
     VisualMapComponent,
+    // VisualMapContinuousComponent,
+    // VisualMapPiecewiseComponent,
     GeoComponent,
     MarkPointComponent
   } from 'echarts/components'
@@ -27,6 +30,8 @@ import {
     TitleComponent,
     DatasetComponent,
     VisualMapComponent,
+    // VisualMapContinuousComponent,
+    // VisualMapPiecewiseComponent,
     GeoComponent,
     MarkPointComponent
   ])
