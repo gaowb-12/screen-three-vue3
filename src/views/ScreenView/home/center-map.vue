@@ -17,7 +17,7 @@ const option = ref({});
 const collections = ["china", "world"];
 const code = ref("world"); //china 代表中国 其他地市是行政编码
 const centerMapRef = ref<ECharts | null>(null);
-const isCity = ref(false);
+const isCity = ref(true);
 
 withDefaults(
   defineProps<{

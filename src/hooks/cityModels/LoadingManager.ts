@@ -16,6 +16,7 @@ AssetsLoadingManager.onStart = () => {
   loadText.innerHTML = `<div>LOADING... 0%</div>`
 }
 AssetsLoadingManager.onProgress = (url, loaded, total) => {
+  console.log("loading progress", (loaded / total * 100).toFixed(2))
   loadUI.innerHTML = `<div>LOADING... ${(loaded / total * 100).toFixed(2)}%</div>`
 }
 AssetsLoadingManager.onLoad = () => {

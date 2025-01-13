@@ -2,15 +2,15 @@ import { AmbientLight, Object3D, PointLight, SpotLight } from "three";
 
 export const lights: Object3D[] = [];
 // 创建环境光
-const ambientLight:AmbientLight = new AmbientLight(0xaaaaaa, 1);
+const ambientLight:AmbientLight = new AmbientLight(0x37383C, 0.1);
 
-export const pointLight: PointLight = new PointLight(
-    0xffffff,
-    0.7,
-    200,
-    0.1
-)
-pointLight.position.set(40,40,40)
+// export const pointLight: PointLight = new PointLight(
+//     0xffffff,
+//     0.7,
+//     200,
+//     0.1
+// )
+// pointLight.position.set(40,40,40)
 
 // 聚光灯
 // export const spotLight: SpotLight = new SpotLight(

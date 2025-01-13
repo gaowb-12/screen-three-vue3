@@ -1,12 +1,17 @@
-import { Clock, Color, EdgesGeometry, Group, Line, LineBasicMaterial, LineSegments, Material, Mesh, MeshBasicMaterial, Object3D, Scene, ShaderMaterial, Vector3 } from "three";
+import { Clock, Color, EdgesGeometry, EquirectangularReflectionMapping, EquirectangularRefractionMapping, Group, Line, LineBasicMaterial, LineSegments, Material, Mesh, MeshBasicMaterial, MeshPhongMaterial, MeshStandardMaterial, Object3D, Object3DEventMap, RectAreaLight, Scene, ShaderMaterial, TextureLoader, Vector3 } from "three";
 import fragmentShader from "@/components/Shader/City3D/fragmentShader.glsl";
 import vertexShader from "@/components/Shader/City3D/vertexShader.glsl";
 import { AssetsLoadingManager } from "./LoadingManager";
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
 import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js"
+import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader.js"
+//导入hdr加载器
+import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader'
 import { createFlyingLines } from './FlyLine'
 import { Engine } from "./Engine";
 import { Time } from "./Time";
+const rasterTexture = new TextureLoader().load( '/models/texture/光栅区域透明.png' );
+const cityTexture = new TextureLoader().load( '/models/texture/网格.png' );
 
 const uniforms = {
     height: { value: 20 },
@@ -60,30 +65,75 @@ function updateUniforms(){
     }
 }
 
+export function initEnv(scene: Engine){
+    const rgbeLoader = new RGBELoader()
+    return rgbeLoader.loadAsync('/models/texture/env.hdr').then((texture) => {
+        texture.mapping = EquirectangularRefractionMapping//正常只是一张图平铺，设置这个可以让图包围环绕整个环境
+        // scene.background = texture //设置环境贴图
+        texture.premultiplyAlpha = true
+        scene.environment = texture
+    })
+}
+
 export function loadCharactor(scene: Engine): Promise<GLTF>{
     const glbLoader = new GLTFLoader(AssetsLoadingManager)
-    // const dracoLoader = new DRACOLoader();
-    // dracoLoader.setDecoderPath( '/models/draco/gltf/' );
-    // dracoLoader.setDecoderConfig({ type: 'js' })
-    // dracoLoader.preload()
-    // glbLoader.setDRACOLoader( dracoLoader );
+    const dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath( '/models/draco/gltf/' );
+    dracoLoader.setDecoderConfig({ type: 'js' })
+    dracoLoader.preload()
+    glbLoader.setDRACOLoader( dracoLoader );
     
-    return glbLoader.loadAsync("/models/gltf/shanghai.gltf")
+    return glbLoader.loadAsync("/models/gltf/city.glb")
     .then(gltf=>{
         const model = gltf.scene;
 
         console.log('-----模型加载完成-----', model)
         model.traverse((child: any) => {
             if (child.isMesh) {
-                if(child.name){
-                    scene.panel.addPanel(child);
-                }
+                // if(child.name){
+                //     scene.panel.addPanel(child);
+                // }
+
                 // 加载不同的材质
                 if (["CITY_UNTRIANGULATED"].includes(child.name)) {
                     // 拿到模型线框的Geometry
                     setCityLineMaterial(child, model);
                     setCityMaterial(child, model);
-                } else if (["ROADS"].includes(child.name)) {
+                } 
+                else if(child.name == "sx_0"){
+                    child.material = new MeshPhongMaterial({
+                        color: new Color(0x000000), // 设置材质的基础颜色
+                        emissive: 0x0069ff, // 设置自发光颜色
+                        emissiveIntensity: 5 // 设置自发光强度
+                    });
+                }
+                else if(child.name == "路网"){
+                    child.material = new MeshPhongMaterial({
+                        color: new Color(0x000000), // 设置材质的基础颜色
+                        emissive: 0xFF8324, // 设置自发光颜色
+                        emissiveIntensity: 5 // 设置自发光强度
+                    });
+                }
+                // start  "拜耳医药" "康乐保"
+                else if(["立方体","立方体001","立方体002","立方体003","平面009","平面012"].includes(child.name)){
+                    // 城市贴图
+                    child.material.map = cityTexture
+                } 
+                else if(["立方体004","平面008"].includes(child.name)){
+                    // 光栅贴图
+                    child.material.map = rasterTexture
+                } 
+                // 处理文本旋转
+                else if(["文本","文本001"].includes(child.name)){
+                    (child as Mesh).rotateZ(Math.PI / 2);
+                    (child as Mesh).scale.set(1.5,1.5,1.5);
+                } 
+                // end  "拜耳医药" "康乐保"
+                else if(child.name == "dm_0"){
+                    // 处理地面
+                    console.log("--地面--", child)
+                } 
+                else if (["ROADS"].includes(child.name)) {
                     //道路
                     const material = new MeshBasicMaterial({
                         color: "rgb(41,46,76)",
@@ -109,12 +159,25 @@ export function loadCharactor(scene: Engine): Promise<GLTF>{
                     );
                 }
             }
+            else if(child.name == "日光"){
+                // 处理灯光
+                child.intensity = 20
+            } 
         })
         
         // 调整模型位置
         model.position.setY(model.position.y + 300);
         model.position.setX(model.position.x + 300);
         model.updateMatrixWorld()
+
+        let rectLightObject = model.getObjectByName("面光") as Object3D
+        // 添加面光源
+        // const rectLight = new RectAreaLight(0xffffff, 0.1, 1.32, 1.32);
+        // rectLight.scale.set(rectLightObject.scale.x, rectLightObject.scale.y, rectLightObject.scale.z)
+        // rectLight.position.set(rectLightObject.position.x, rectLightObject.position.y, rectLightObject.position.z)
+        // rectLight.rotation.set(rectLightObject.rotation.x, rectLightObject.rotation.y, rectLightObject.rotation.z)
+        // rectLight.lookAt(0, 0, 0);
+        // scene.add(rectLight);
 
         let start = model.getObjectByName("ROADS")
         let end = model.getObjectByName("CITY_UNTRIANGULATED")

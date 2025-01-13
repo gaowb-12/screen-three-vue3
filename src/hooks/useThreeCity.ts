@@ -7,9 +7,9 @@ export const useThreeCity = (canvas: HTMLCanvasElement, ops?:any) => {
       near: 0.1,
       far: 8000,
       position: {
-          x: 1750,
-          y: 874,
-          z: 1097,
+          x: -971,
+          y: 1852,
+          z: 439,
       },
     },
     width: canvas.width, 

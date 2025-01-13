@@ -13,6 +13,7 @@ import Stats from 'three/examples/jsm/libs/stats.module';
 import { EventManager } from "./EventManager";
 import { Time } from "./Time";
 import { Panel } from "./Panel";
+import {initEnv} from "./LoadModel"
 
 export class Engine extends Scene {
     private dom: HTMLCanvasElement | null
@@ -53,8 +54,14 @@ export class Engine extends Scene {
         // 初始化渲染器
         this.renderer = new WebGLRenderer({
             canvas: this.dom,
-            antialias: true
+            antialias: true,
         });
+        // 设置背景颜色
+        this.renderer.setClearColor(options.renderer.clearColor, options.renderer.clearAlpha);
+
+        // 允许阴影
+        this.renderer.shadowMap.enabled = true;
+        
         // 允许阴影
         // this.renderer.shadowMap.enabled = true
         // 初始化场景
@@ -84,7 +91,7 @@ export class Engine extends Scene {
         //     MIDDLE: MOUSE.DOLLY,
         //     RIGHT: MOUSE.ROTATE,
         // }
-
+        // initEnv(this)
         // 初始变换控制器
         let transing = false; // 区分触发的事件
         this.eventManager = new EventManager({
