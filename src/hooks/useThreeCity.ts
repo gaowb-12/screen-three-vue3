@@ -1,6 +1,9 @@
+import { Sizes } from "@/mini3d";
 import { loadCharactor, helpers, lights, Engine } from "./cityModels";
 
 export const useThreeCity = (canvas: HTMLCanvasElement, ops?:any) => {
+
+  const sizes = new Sizes({canvas});
   const options = {
     camera: {
       fov: 45,
@@ -12,8 +15,9 @@ export const useThreeCity = (canvas: HTMLCanvasElement, ops?:any) => {
           z: 439,
       },
     },
-    width: canvas.width, 
-    height: canvas.height,
+    pixelRatio: sizes.pixelRatio,
+    width: sizes.width, 
+    height: sizes.height,
     ...ops
   }
   let S = new Engine(canvas, options);

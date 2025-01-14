@@ -41,18 +41,19 @@ export default defineConfig(({ command, mode }: ConfigEnv): UserConfig => {
     resolve: {
       alias: {
         "@": resolve(__dirname, "./src"),
+        "~@": resolve("./src"),
         "components": resolve(__dirname, "./src/components"),
         "api": resolve(__dirname, "./src/api"),
       },
     },
     css: {
       // css预处理器
-      preprocessorOptions: {
-        scss: {
-          // charset: false,
-          additionalData: `@use "./src/assets/css/variable.scss" as *;`,
-        },
-      },
+      // preprocessorOptions: {
+      //   scss: {
+      //     // charset: false,
+      //     additionalData: `@use "./src/assets/css/variable.scss" as *;`,
+      //   },
+      // },
     },
     build: {
       outDir: 'dist',

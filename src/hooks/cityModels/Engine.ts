@@ -40,6 +40,7 @@ export class Engine extends Scene {
                     z: 1451,
                 },
             },
+            pixelRatio: 2,
             width: window.innerWidth,
             height: window.innerHeight,
             renderer: {
@@ -61,6 +62,7 @@ export class Engine extends Scene {
 
         // 允许阴影
         this.renderer.shadowMap.enabled = true;
+        this.renderer.setPixelRatio(options.pixelRatio)
         
         // 允许阴影
         // this.renderer.shadowMap.enabled = true
