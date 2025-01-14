@@ -1,6 +1,10 @@
-import { Clock, Color, EdgesGeometry, EquirectangularReflectionMapping, EquirectangularRefractionMapping, Group, Line, LineBasicMaterial, LineSegments, Material, Mesh, MeshBasicMaterial, MeshPhongMaterial, MeshStandardMaterial, Object3D, Object3DEventMap, RectAreaLight, Scene, ShaderMaterial, TextureLoader, Vector3 } from "three";
+import { Clock, Color, DirectionalLight, EdgesGeometry, EquirectangularReflectionMapping, EquirectangularRefractionMapping, Group, Line, LineBasicMaterial, LineSegments, Material, Mesh, MeshBasicMaterial, MeshPhongMaterial, MeshStandardMaterial, Object3D, Object3DEventMap, RectAreaLight, Scene, ShaderMaterial, TextureLoader, Vector3 } from "three";
 import fragmentShader from "@/components/Shader/City3D/fragmentShader.glsl";
 import vertexShader from "@/components/Shader/City3D/vertexShader.glsl";
+
+import rasterOpacityFragmentShader from "@/components/Shader/rasterOpacity/fragmentShader.glsl";
+import rasterOpacityVertexShader from "@/components/Shader/rasterOpacity/vertexShader.glsl";
+
 import { AssetsLoadingManager } from "./LoadingManager";
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
 import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js"
@@ -12,6 +16,8 @@ import { Engine } from "./Engine";
 import { Time } from "./Time";
 const rasterTexture = new TextureLoader().load( '/models/texture/光栅区域透明.png' );
 const cityTexture = new TextureLoader().load( '/models/texture/网格.png' );
+const rasterOpacityTexture = new TextureLoader().load('/models/texture/rasterOpacityTexture.png');
+const klbRasterOpacityTexture = new TextureLoader().load('/models/texture/rasterOpacityTexture-klb.png');
 
 const uniforms = {
     height: { value: 20 },
@@ -93,7 +99,8 @@ export function loadCharactor(scene: Engine): Promise<GLTF>{
                 // if(child.name){
                 //     scene.panel.addPanel(child);
                 // }
-
+                child.castShadow = true
+                child.receiveShadow = true
                 // 加载不同的材质
                 if (["CITY_UNTRIANGULATED"].includes(child.name)) {
                     // 拿到模型线框的Geometry
@@ -101,6 +108,7 @@ export function loadCharactor(scene: Engine): Promise<GLTF>{
                     setCityMaterial(child, model);
                 } 
                 else if(child.name == "sx_0"){
+                    // 河流
                     child.material = new MeshPhongMaterial({
                         color: new Color(0x000000), // 设置材质的基础颜色
                         emissive: 0x0069ff, // 设置自发光颜色
@@ -113,6 +121,9 @@ export function loadCharactor(scene: Engine): Promise<GLTF>{
                         emissive: 0xFF8324, // 设置自发光颜色
                         emissiveIntensity: 5 // 设置自发光强度
                     });
+                    // 调整位置
+                    child.position.x += 60
+                    child.position.z += 40
                 }
                 // start  "拜耳医药" "康乐保"
                 else if(["立方体","立方体001","立方体002","立方体003","平面009","平面012"].includes(child.name)){
@@ -121,7 +132,26 @@ export function loadCharactor(scene: Engine): Promise<GLTF>{
                 } 
                 else if(["立方体004","平面008"].includes(child.name)){
                     // 光栅贴图
-                    child.material.map = rasterTexture
+                    console.log("--光栅贴图--", child)
+                    // child.material.map = rasterTexture
+                    child.material.map = klbRasterOpacityTexture
+                    // if(child.name === "平面008"){
+                    //     child.material.map = klbRasterOpacityTexture
+                    // }
+                    // child.material = new MeshStandardMaterial({
+                    //     map: rasterTexture,
+                    //     transparent: true,
+                    //     opacity: 1.0
+                    // });
+                    // child.material = new ShaderMaterial({
+                    //     uniforms: {
+                    //         map: {value: rasterTexture},
+                    //         alphaMap: {value: rasterOpacityTexture},
+                    //     },
+                    //     vertexShader: rasterOpacityVertexShader,
+                    //     fragmentShader: rasterOpacityFragmentShader,
+                    //     transparent: true
+                    // });
                 } 
                 // 处理文本旋转
                 else if(["文本","文本001"].includes(child.name)){
@@ -135,33 +165,37 @@ export function loadCharactor(scene: Engine): Promise<GLTF>{
                 } 
                 else if (["ROADS"].includes(child.name)) {
                     //道路
-                    const material = new MeshBasicMaterial({
-                        color: "rgb(41,46,76)",
-                    });
-                    const mesh = new Mesh(child.geometry, material);
-                    mesh.rotateX(-Math.PI / 2);
-                    mesh.position.set(
-                        child.position.x,
-                        child.position.y,
-                        child.position.z
-                    );
+                    // const material = new MeshBasicMaterial({
+                    //     color: "rgb(41,46,76)",
+                    // });
+                    // const mesh = new Mesh(child.geometry, material);
+                    // mesh.rotateX(-Math.PI / 2);
+                    // mesh.position.set(
+                    //     child.position.x,
+                    //     child.position.y,
+                    //     child.position.z
+                    // );
                 } else {
-                    //地面
-                    const material = new MeshBasicMaterial({
-                        color: "#040912",
-                    });
-                    const mesh = new Mesh(child.geometry, material);
-                    mesh.rotateX(-Math.PI / 2);
-                    mesh.position.set(
-                        child.position.x,
-                        child.position.y,
-                        child.position.z
-                    );
+                    // //地面
+                    // const material = new MeshBasicMaterial({
+                    //     color: "#040912",
+                    // });
+                    // const mesh = new Mesh(child.geometry, material);
+                    // mesh.rotateX(-Math.PI / 2);
+                    // mesh.position.set(
+                    //     child.position.x,
+                    //     child.position.y,
+                    //     child.position.z
+                    // );
                 }
             }
             else if(child.name == "日光"){
                 // 处理灯光
+                child = child as DirectionalLight
                 child.intensity = 20
+                child.position.y -= 300
+                child.position.y += 100
+                child.castShadow = true
             } 
         })
         
