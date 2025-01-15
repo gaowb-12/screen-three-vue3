@@ -102,7 +102,7 @@ body {
     .left-wrap {
       position: absolute;
       z-index: 4;
-      width: 398px;
+      // width: 398px;
       left: 32px;
       top: 126px;
       bottom: 50px;
@@ -114,15 +114,15 @@ body {
         top: 0;
         right: 0;
         bottom: 0;
-        display: flex;
-        flex-direction: column;
+        // display: flex;
+        // flex-direction: column;
         // justify-content: space-between;
         transform: translate3d(0px, 0px, 0px) scaleX(1) scaleY(1) rotateX(0deg) rotateY(6deg) rotateZ(0deg) skewX(0deg)
           skewY(0deg);
         z-index: 4;
         .left-card {
           flex: 1;
-          margin-bottom: 12px;
+          margin-bottom: 30px;
         }
       }
     }

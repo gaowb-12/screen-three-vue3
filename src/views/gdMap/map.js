@@ -44,12 +44,9 @@ import {
 } from "@/mini3d"
 
 import { geoMercator } from "d3-geo"
-import labelIcon from "@/assets/texture/label-icon.png"
 import worldData from "./map/worldData"
 import chinaData from "./map/chinaData"
 import provincesData from "./map/provincesData"
-import scatterData from "./map/scatter"
-import infoData from "./map/infoData"
 import gsap from "gsap"
 import emitter from "@/utils/emitter"
 import { InteractionManager } from "three.interactive"
@@ -64,13 +61,11 @@ function sortByValue(data) {
 const mapScale = {
   world:3,
   country:18,
-  province: 90,
-  city: 200,
-  district: 400,
+  province: 300,
 };
 
 export class World extends Mini3d {
-  constructor(canvas, assets) {
+  constructor(canvas, assets, options) {
     super(canvas)
     this.mapName="world"
     this.level="world"
@@ -79,6 +74,7 @@ export class World extends Mini3d {
       country: chinaData,
       province: provincesData
     }
+    this.options = options
     // 中心坐标
     this.geoProjectionCenter = [0, 50]
     // 缩放比例
@@ -147,8 +143,6 @@ export class World extends Mini3d {
     this.createScatter()
     // 创建信息点
     this.createInfoPoint()
-    // 创建轮廓
-    this.createStorke()
     // this.time.on("tick", () => {
     //   console.log(this.camera.instance.position);
     // });
@@ -604,7 +598,7 @@ export class World extends Mini3d {
       const mesh = new Mesh(geo, material)
       mesh.renderOrder = 5
       let areaBar = mesh
-      let [x, y] = this.geoProjection(item.centroid)
+      let [x, y] = this.geoProjection(item.center)
       areaBar.position.set(x, -y, this.depth + 0.45)
       areaBar.scale.set(1, 1, 0)
       areaBar.userData = { ...item }
@@ -724,22 +718,25 @@ export class World extends Mini3d {
   }
   // 下钻
   downDrill(mapInfo){
-    if(mapInfo.userData.name == 'China' || mapInfo.userData.name == '广东省'){
+    if(mapInfo.userData.name == 'China' || mapInfo.userData.name == '北京市'){
       this.removeAllChildren(this.mapGroupContainer);
       // this.removeAllChildren(this.barGroup);
       this.removeAllbar()
       if(mapInfo.userData.name == 'China'){
+        this.options.changeIsCity&&this.options.changeIsCity()
         // 点击中国
-        this.mapName = "china"
-        this.level="country"
-        this.geoProjectionCenter = [104.114, 37.550];
-        chinaData
-      }else if(mapInfo.userData.name == '广东省'){
+        // this.mapName = "china"
+        // this.level="country"
+        // this.geoProjectionCenter = [104.114, 37.550];
+      }else if(mapInfo.userData.name == '北京市'){
         // 点击广东
-        this.mapName = "mapJson"
+        this.mapName = "beijing"
         this.level="province"
-        this.geoProjectionCenter = [113.280637, 23.125178]
+        this.geoProjectionCenter = [116.486409,39.921489]
+      }else if(mapInfo.userData.name == '朝阳区'){
+        this.options.changeIsCity&&this.options.changeIsCity()
       }
+        
       this.geoProjectionScale = mapScale[this.level]
   
       this.toggleMap()
@@ -1013,7 +1010,7 @@ export class World extends Mini3d {
     let data = (this.mapData[this.level] || provincesData).filter((item, index) => index < 7)
     data
       .map((city) => {
-        let [x, y] = this.geoProjection(city.centroid)
+        let [x, y] = this.geoProjection(city.center)
         let point = new Vector3(x, -y, 0)
         const center = new Vector3()
         center.addVectors(centerPoint, point).multiplyScalar(0.5)
@@ -1195,36 +1192,6 @@ export class World extends Mini3d {
         }
       })
     }, 3000)
-  }
-  createStorke() {
-    const mapStroke = this.assets.instance.getResource("mapStroke")
-    const texture = this.assets.instance.getResource("pathLine3")
-    texture.wrapS = texture.wrapT = RepeatWrapping
-    texture.repeat.set(2, 1)
-
-    let pathLine = new Line(this, {
-      geoProjectionCenter: this.geoProjectionCenter,
-      geoProjectionScale: this.geoProjectionScale,
-      position: new Vector3(0, 0, this.depth + 0.24),
-      data: mapStroke,
-      material: new MeshBasicMaterial({
-        color: 0x2bc4dc,
-        map: texture,
-        alphaMap: texture,
-        fog: false,
-        transparent: true,
-        opacity: 1,
-        blending: AdditiveBlending,
-      }),
-      type: "Line3",
-      renderOrder: 22,
-      tubeRadius: 0.03,
-    })
-    // 设置父级
-    this.focusMapGroup.add(pathLine.lineGroup)
-    this.time.on("tick", () => {
-      texture.offset.x += 0.005
-    })
   }
 
   geoProjection(args) {

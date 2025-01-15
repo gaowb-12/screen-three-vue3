@@ -10,3 +10,19 @@ body,
   height: 100%;
   overflow: hidden;
 }
+/* 自定义滚动条整体样式 */
+*::-webkit-scrollbar {
+  width: 5px; /* 滚动条的宽度 */
+}
+
+/* 自定义滚动条滑块样式 */
+*::-webkit-scrollbar-thumb {
+  background: #646464; /* 滑块颜色 */
+  border-radius: 24px; /* 滑块圆角 */
+}
+
+/* 自定义滚动条轨道样式 */
+*::-webkit-scrollbar-track {
+  background: rgba(100, 100, 100, 0.5); /* 轨道颜色 */
+  border-radius: 24px; /* 轨道圆角 */
+}

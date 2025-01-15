@@ -1,31 +1,28 @@
 <template>
   <div class="large-screen">
     <!-- 地图 -->
+    <span @click="changeIsCity" class="back-world" v-if="isCity">回到世界地图</span>
     <mapScene ref="mapSceneRef" v-if="!isCity"></mapScene>
     <City v-else /> 
     <div class="large-screen-wrap" id="large-screen">
       <m-header title="北京朝阳国际数据跨境服务枢纽" sub-text="BEIJINGCHAOYANGGUOJISHUJVKUAJINGFUWUSHUNIU"></m-header>
-      <!-- 顶部统计卡片 -->
-      <div class="top-count-card">
-      <!-- <mCountCard v-for="(item, index) in state.totalView" :info="item" :key="index"></mCountCard> -->
-      </div>
       <!-- 左边布局 图表 -->
       <div class="left-wrap">
         <div class="left-wrap-3d">
-          <!-- 大宗商品销售额 -->
+          <!-- 跨境传输情况 -->
           <BulkCommoditySalesChart></BulkCommoditySalesChart>
-          <!-- 年度经济增长点 -->
+          <!-- 累计出境数量 -->
           <YearlyEconomyTrend></YearlyEconomyTrend>
-          <!-- 各区经济收益 -->
+          <!-- TOP10数据出境国家 -->
           <DistrictEconomicIncome></DistrictEconomicIncome>
         </div>
       </div>
       <!-- 底边布局 图表 -->
       <div class="bottom-wrap">
         <div class="bottom-wrap-3d">
-          <!-- 人群消费占比 -->
+          <!-- 合作企业 -->
           <ProportionPopulationConsumption></ProportionPopulationConsumption>
-          <!-- 用电情况 -->
+          <!-- 电子商务行业企业跨境传输路径情况 -->
           <ElectricityUsage></ElectricityUsage>
         </div>
       </div>
@@ -53,10 +50,6 @@
           path="M1 56.6105C1 31.5123 185.586 10.0503 451.904 1.35519C458.942 1.12543 465.781 4.00883 470.505 9.22964L484.991 25.2383C487.971 28.4775 492.938 30.4201 498.254 30.4201H720.142"
         ></mSvglineAnimation>
       </div>
-      <!-- 雷达 -->
-      <div class="bottom-radar">
-        <mRadar></mRadar>
-      </div>
       <!-- 左右装饰线 -->
       <div class="large-screen-left-zsline"></div>
       <div class="large-screen-right-zsline"></div>
@@ -81,7 +74,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { shallowRef, ref, reactive, onMounted, onBeforeUnmount, defineAsyncComponent } from "vue"
+import { shallowRef, ref, reactive, onMounted, onBeforeUnmount, defineAsyncComponent, provide  } from "vue"
 import mapScene from "./map.vue"
 import mHeader from "@/components/mHeader/index.vue"
 import mCountCard from "@/components/mCountCard/index.vue"
@@ -134,6 +127,10 @@ const state = reactive({
     },
   ],
 })
+function changeIsCity(){
+  isCity.value = !isCity.value
+}
+provide('changeIsCity', changeIsCity)
 onMounted(() => {
   // 监听地图播放完成，执行事件
   emitter.$on("mapPlayComplete", handleMapPlayComplete)
@@ -249,6 +246,14 @@ function handleMapPlayComplete() {
 
 <style lang="scss">
 @import "~@/assets/style/home.scss";
+.back-world {
+  position: absolute;
+  left: 50%;
+  top: 300px;
+  color: #fff;
+  z-index: 10;
+  cursor: pointer;
+}
 .m-header-weather,
 .m-header-date {
   span {

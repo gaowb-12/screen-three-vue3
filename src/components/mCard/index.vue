@@ -1,251 +1,13 @@
 <template>
   <div class="m-card" :style="calcWidthHeightStyle">
     <div class="m-card-hd">
-      <div class="m-card-hd-bg">
-        <svg :width="width" height="36" :viewBox="`0 0 ${width} 36`" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <g :clip-path="`url(#clip0_70_69244${componentsUID})`">
-            <rect y="34.5" :width="width" height="1" fill="url(#paint0_linear_70_69244)" />
-            <mask :id="`path-2-inside-1_70_69244${componentsUID}`" fill="white">
-              <path fill-rule="evenodd" clip-rule="evenodd" :d="`M10 0.5H165L175 10.5H${width}V34.5H0V10.5L10 0.5Z`" />
-            </mask>
-            <path
-              fill-rule="evenodd"
-              clip-rule="evenodd"
-              :d="`M10 0.5H165L175 10.5H${width}V34.5H0V10.5L10 0.5Z`"
-              :fill="`url(#paint1_linear_70_69244${componentsUID})`"
-            />
-            <path
-              :d="titleStorke"
-              :fill="`url(#paint2_linear_70_69244${componentsUID})`"
-              :mask="`url(#path-2-inside-1_70_69244${componentsUID})`"
-            />
-            <g opacity="0.5">
-              <mask
-                id="mask0_70_69244"
-                style="mask-type: alpha"
-                maskUnits="userSpaceOnUse"
-                x="12"
-                y="-12"
-                width="165"
-                height="29"
-              >
-                <g style="mix-blend-mode: plus-lighter" opacity="0.8">
-                  <path
-                    d="M177 2.5C177 -4.22 139.531 -11.5 93.9677 -11.5C48.4043 -11.5 12 -5.23199 12 2.5C12 10.232 48.4043 16.5 93.9677 16.5C139.531 16.5 177 9.22 177 2.5Z"
-                    fill="url(#paint3_diamond_70_69244)"
-                  />
-                </g>
-              </mask>
-              <g mask="url(#mask0_70_69244)">
-                <g style="mix-blend-mode: plus-lighter" opacity="0.8">
-                  <path
-                    d="M177 0.999998C177 -6 137.934 -11.5 92.371 -11.5C46.8075 -11.5 12 -5.90356 12 0.999998C12 7.90356 46.8075 13.5 92.371 13.5C137.934 13.5 177 8 177 0.999998Z"
-                    fill="url(#paint4_diamond_70_69244)"
-                  />
-                </g>
-              </g>
-            </g>
-            <g style="mix-blend-mode: plus-lighter" opacity="0.1">
-              <ellipse
-                cx="81.5264"
-                cy="12.5"
-                rx="81.5264"
-                ry="12.5"
-                transform="matrix(1 0 0 -1 12 13.5)"
-                fill="url(#paint5_radial_70_69244)"
-              />
-            </g>
-            <path d="M0 0.5H6L0 6.5V0.5Z" fill="#30DCFF" />
-            <path
-              fill-rule="evenodd"
-              clip-rule="evenodd"
-              d="M170 0.5H398V7.5H177L170 0.5Z"
-              fill="url(#paint6_linear_70_69244)"
-            />
-            <g style="mix-blend-mode: plus-lighter" :clip-path="`url(#clip1_70_69244${componentsUID})`">
-              <g style="mix-blend-mode: plus-lighter" opacity="0.8">
-                <ellipse
-                  cx="65"
-                  cy="2.16667"
-                  rx="65"
-                  ry="2.16667"
-                  transform="matrix(1 1.64302e-07 0.0495776 0.99877 27.6855 -1.82568)"
-                  fill="url(#paint7_radial_70_69244)"
-                />
-              </g>
-              <g style="mix-blend-mode: plus-lighter" opacity="0.5">
-                <ellipse
-                  cx="28.7857"
-                  cy="4.16667"
-                  rx="28.7857"
-                  ry="4.16667"
-                  transform="matrix(1 1.64302e-07 0.0495776 0.99877 63.8008 -3.82324)"
-                  fill="url(#paint8_radial_70_69244)"
-                />
-              </g>
-              <g style="mix-blend-mode: plus-lighter" opacity="0.54">
-                <ellipse
-                  cx="23.2143"
-                  cy="2.16667"
-                  rx="23.2143"
-                  ry="2.16667"
-                  transform="matrix(1 1.64302e-07 0.0495776 0.99877 69.4727 -1.82568)"
-                  fill="url(#paint9_radial_70_69244)"
-                />
-              </g>
-              <g style="mix-blend-mode: plus-lighter" opacity="0.8">
-                <ellipse
-                  cx="9.28571"
-                  cy="2.16667"
-                  rx="9.28571"
-                  ry="2.16667"
-                  transform="matrix(1 1.64302e-07 0.0495776 0.99877 83.4004 -1.82568)"
-                  fill="url(#paint10_radial_70_69244)"
-                />
-              </g>
-            </g>
-          </g>
-          <defs>
-            <linearGradient
-              id="paint0_linear_70_69244"
-              :x1="width"
-              y1="35.5021"
-              x2="0"
-              y2="35.5021"
-              gradientUnits="userSpaceOnUse"
-            >
-              <stop stop-color="#35A8EB" stop-opacity="0.1" />
-              <stop offset="1" stop-color="#30DCFF" />
-            </linearGradient>
-            <linearGradient
-              :id="`paint1_linear_70_69244${componentsUID}`"
-              :x1="width"
-              y1="17.5"
-              x2="7.94819"
-              y2="17.5"
-              gradientUnits="userSpaceOnUse"
-            >
-              <stop offset="0.0364889" stop-color="#35A8EB" stop-opacity="0.11" />
-              <stop offset="1" stop-color="#30C1FF" stop-opacity="0.27" />
-            </linearGradient>
-            <linearGradient
-              :id="`paint2_linear_70_69244${componentsUID}`"
-              x1="40.8948"
-              y1="13.5"
-              x2="40.895"
-              y2="-6.50005"
-              gradientUnits="userSpaceOnUse"
-            >
-              <stop stop-color="#35A8EB" stop-opacity="0" />
-              <stop offset="1" stop-color="#30DCFF" />
-            </linearGradient>
-            <radialGradient
-              id="paint3_diamond_70_69244"
-              cx="0"
-              cy="0"
-              r="1"
-              gradientUnits="userSpaceOnUse"
-              gradientTransform="translate(94.5 3.62) rotate(-90) scale(41.1199 76.576)"
-            >
-              <stop stop-color="#B7EEFF" />
-              <stop offset="0.302515" stop-color="#9BE2FF" stop-opacity="0.76" />
-              <stop offset="1" stop-color="#6BD4FF" stop-opacity="0" />
-            </radialGradient>
-            <radialGradient
-              id="paint4_diamond_70_69244"
-              cx="0"
-              cy="0"
-              r="1"
-              gradientUnits="userSpaceOnUse"
-              gradientTransform="translate(84.3871 2.00005) rotate(-90) scale(14.0001 188.259)"
-            >
-              <stop stop-color="#B7EEFF" />
-              <stop offset="0.302515" stop-color="#9BE2FF" stop-opacity="0.76" />
-              <stop offset="1" stop-color="#6BD4FF" stop-opacity="0" />
-            </radialGradient>
-            <radialGradient
-              id="paint5_radial_70_69244"
-              cx="0"
-              cy="0"
-              r="1"
-              gradientUnits="userSpaceOnUse"
-              gradientTransform="translate(80.7192 12.5) rotate(90) scale(12.5 73.8747)"
-            >
-              <stop stop-color="#00B1E9" />
-              <stop offset="1" stop-color="#6BD4FF" stop-opacity="0" />
-            </radialGradient>
-            <linearGradient
-              id="paint6_linear_70_69244"
-              x1="567.258"
-              y1="5.49999"
-              x2="177.933"
-              y2="5.49993"
-              gradientUnits="userSpaceOnUse"
-            >
-              <stop offset="0.429792" stop-color="#35A8EB" stop-opacity="0" />
-              <stop offset="1" stop-color="#30C1FF" stop-opacity="0.27" />
-            </linearGradient>
-            <radialGradient
-              id="paint7_radial_70_69244"
-              cx="0"
-              cy="0"
-              r="1"
-              gradientUnits="userSpaceOnUse"
-              gradientTransform="translate(64.3564 2.16667) rotate(90.0001) scale(2.16667 64.3564)"
-            >
-              <stop stop-color="#B7EEFF" />
-              <stop offset="0.302515" stop-color="#9BE2FF" stop-opacity="0.76" />
-              <stop offset="1" stop-color="#6BD4FF" stop-opacity="0" />
-            </radialGradient>
-            <radialGradient
-              id="paint8_radial_70_69244"
-              cx="0"
-              cy="0"
-              r="1"
-              gradientUnits="userSpaceOnUse"
-              gradientTransform="translate(28.5007 4.16667) rotate(90) scale(4.16667 28.5007)"
-            >
-              <stop stop-color="#B7EEFF" />
-              <stop offset="1" stop-color="#6BD4FF" stop-opacity="0" />
-            </radialGradient>
-            <radialGradient
-              id="paint9_radial_70_69244"
-              cx="0"
-              cy="0"
-              r="1"
-              gradientUnits="userSpaceOnUse"
-              gradientTransform="translate(22.9844 2.16667) rotate(90) scale(2.16667 22.9844)"
-            >
-              <stop stop-color="#B7EEFF" />
-              <stop offset="0.302515" stop-color="#9BE2FF" stop-opacity="0.76" />
-              <stop offset="1" stop-color="#6BD4FF" stop-opacity="0" />
-            </radialGradient>
-            <radialGradient
-              id="paint10_radial_70_69244"
-              cx="0"
-              cy="0"
-              r="1"
-              gradientUnits="userSpaceOnUse"
-              gradientTransform="translate(9.19377 2.16667) rotate(90) scale(2.16667 9.19377)"
-            >
-              <stop stop-color="#B7EEFF" />
-              <stop offset="0.302515" stop-color="#9BE2FF" stop-opacity="0.76" />
-              <stop offset="1" stop-color="#6BD4FF" stop-opacity="0" />
-            </radialGradient>
-            <clipPath :id="`clip0_70_69244${componentsUID}`">
-              <rect :width="width" height="35" fill="white" transform="translate(0 0.5)" />
-            </clipPath>
-            <clipPath :id="`clip1_70_69244${componentsUID}`">
-              <rect width="130" height="4" fill="white" transform="matrix(1 1.64302e-07 -0.0495776 -0.99877 28 4.5)" />
-            </clipPath>
-          </defs>
-        </svg>
-      </div>
-      <img class="m-card-hd-zs1" src="@/assets/images/m-card/title-zs1.svg" alt="" />
+      <div class="m-card-hd-bg"></div>
       <div class="saoguang">
         <img src="@/assets/images/m-card/saoguang.svg" alt="" />
       </div>
-      <div class="m-card-hd-title">{{ title }}</div>
+      <div class="border-left"></div>
+      <div class="arrow-right"></div>
+      <div class="m-card-hd-title">{{ title }} <span>{{ subTitle }}</span></div>
     </div>
     <div class="m-card-bd" :style="calcWidthHeightStyle">
       <div class="m-card-bd-bg" :style="calcWidthHeightStyle">
@@ -291,7 +53,7 @@ import { computed, ref, getCurrentInstance, onMounted } from "vue"
 const props = defineProps({
   width: {
     type: Number,
-    default: 398,
+    default: 500,
   },
   height: {
     type: Number,
@@ -300,6 +62,10 @@ const props = defineProps({
   title: {
     type: String,
     default: "标题",
+  },
+  subTitle: {
+    type: String,
+    default: "",
   },
 })
 // 唯一id
@@ -435,18 +201,37 @@ onMounted(() => {
     }
     &-title {
       position: absolute;
-      left: 22px;
+      // left: 22px;
+      padding-left:22px;
+      width:100%;
       color: #fff;
-      font-size: 16px;
       font-weight: 400;
       letter-spacing: 1.6px;
       height: 36px;
       line-height: 32px;
       font-family: "PingFangSc";
+      font-size: 20px;
       font-weight: 600;
-      background: -webkit-linear-gradient(rgba(219, 249, 255, 1), rgba(169, 240, 255, 1));
+      white-space:nowrap;
+      // background: -webkit-linear-gradient(rgba(219, 249, 255, 1), rgba(169, 240, 255, 1));
+      // -webkit-background-clip: text;
+      // -webkit-text-fill-color: transparent;
+
+      background: linear-gradient(0deg, #888888 24%, #FFFFFF 82%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-fill-color: transparent;
+      box-shadow: 2px 2px 3px 0px rgba(14, 14, 14, 0.5);
+      span{
+        background: linear-gradient(90deg, #888888 10%, rgba(0, 0, 0, 0.8) 82%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-fill-color: transparent;
+        font-family: "Alimama", "ShuHeiTi";
+        font-size: 14px;
+      }
     }
     .saoguang {
       position: absolute;
@@ -456,10 +241,47 @@ onMounted(() => {
       height: 36px;
       overflow: hidden;
       pointer-events: none;
+      border:2px solid rgba(255, 255, 255, 0.5);
+      border-left-width: 0;
+      border-right-width: 0 ;
+      background: linear-gradient(to right, transparent 0%, rgba(255, 255, 255, 0.272) 15%, transparent 64%, transparent 99%);
       img {
         width: 89px;
         height: 36px;
         animation: saoguangMove 6s linear infinite;
+      }
+    }
+    .border-left {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 4px;
+      height: 36px;
+      overflow: hidden;
+      pointer-events: none;
+      background: linear-gradient(to bottom, transparent 0%, rgba(255, 255, 255, 0.5) 20%, rgba(255, 255, 255, 1) 50%, rgba(255, 255, 255, 0.5) 80%, transparent 100%);
+    }
+    .arrow-right {
+      position: absolute;
+      right: 20px;
+      top: 18px;
+      height:4px;
+      border-right:4px solid #fff;
+      pointer-events: none;
+      z-index:1;
+      &::after, &::before{
+        content:"";
+        position: absolute;
+        top: -4px;
+        right: 0;
+        width:4px;
+        height:4px;
+        overflow: hidden;
+        background:#fff;
+      }
+      &::after{
+        top: auto;
+        bottom: -4px;
       }
     }
   }

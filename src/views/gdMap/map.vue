@@ -4,10 +4,12 @@
   </div>
 </template>
 <script setup>
-import { onMounted, shallowRef, onBeforeUnmount } from "vue";
+import { onMounted, shallowRef, onBeforeUnmount,inject } from "vue";
 import { World } from "./map.js";
 import emitter from "@/utils/emitter";
 const canvasMap = shallowRef(null);
+
+const changeIsCity = inject("changeIsCity")
 onMounted(() => {
   emitter.$on("loadMap", loadMap);
 });
@@ -16,7 +18,10 @@ onBeforeUnmount(() => {
   emitter.$off("loadMap", loadMap);
 });
 function loadMap(assets) {
-  canvasMap.value = new World(document.getElementById("canvasMap"), assets);
+  let options = {
+    changeIsCity
+  }
+  canvasMap.value = new World(document.getElementById("canvasMap"), assets, options);
   canvasMap.value.time.pause();
 }
 async function play() {

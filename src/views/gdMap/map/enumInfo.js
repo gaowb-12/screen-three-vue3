@@ -13,9 +13,9 @@ export default {
     },
     province: {
         scale:90,
-        assetsMapName: "mapJson",//广东
+        assetsMapName: "beijing",
         mapLevel: "province",
-        centerCoordinates: [113.280637, 23.125178]
+        centerCoordinates: [116.405285, 39.904989]
     },
     city: {
         scale:200,
