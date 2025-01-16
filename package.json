@@ -29,6 +29,7 @@
     "three": "0.158.0",
     "three-auto": "^0.2.9",
     "three.interactive": "1.7.0",
+    "three.meshline": "^1.4.0",
     "tiny-emitter": "2.1.0",
     "uuid": "9.0.1",
     "vite-plugin-glsl": "^1.3.1",

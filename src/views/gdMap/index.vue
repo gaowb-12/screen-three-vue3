@@ -101,8 +101,8 @@ const City = defineAsyncComponent(() =>
   import('./city/index.vue')
 );
 
-const assets = shallowRef(null)
-const mapSceneRef = ref(null)
+const assets = shallowRef()
+const mapSceneRef = ref()
 const isCity = ref(false)
 const state = reactive({
   // 进度
@@ -178,7 +178,7 @@ function initAssets(onLoadCallback) {
 
 // 隐藏loading
 async function hideLoading() {
-  return new Promise((resolve, reject) => {
+  return new Promise<void>((resolve, reject) => {
     let tl = gsap.timeline()
     tl.to(".loading-text span", {
       y: "200%",
@@ -248,11 +248,14 @@ function handleMapPlayComplete() {
 @import "~@/assets/style/home.scss";
 .back-world {
   position: absolute;
-  left: 50%;
-  top: 300px;
+  right: 2%;
+  top: 90px;
   color: #fff;
   z-index: 10;
   cursor: pointer;
+  padding: 5px;
+  border-radius:5px;
+  background: rgba(24, 144, 255, 0.5);
 }
 .m-header-weather,
 .m-header-date {

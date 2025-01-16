@@ -7,6 +7,8 @@ import {
     Mesh,
     MeshStandardMaterial,
     BufferGeometry,
+    Vector2,
+    LinearToneMapping,
 } from "three";
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import Stats from 'three/examples/jsm/libs/stats.module';
@@ -14,10 +16,16 @@ import { EventManager } from "./EventManager";
 import { Time } from "./Time";
 import { Panel } from "./Panel";
 import {initEnv} from "./LoadModel"
+import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass";
+import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass";
+import { OutputPass } from "three/examples/jsm/postprocessing/OutputPass";
+import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer";
+import { initBloomGui } from "./gui";
 
 export class Engine extends Scene {
     private dom: HTMLCanvasElement | null
     private renderer: WebGLRenderer
+    private composer!: EffectComposer
     // private scene:Scene
     private controls: OrbitControls
     private stats: Stats
@@ -45,7 +53,12 @@ export class Engine extends Scene {
             height: window.innerHeight,
             renderer: {
                 clearAlpha: 1,
-                clearColor: "#302E37",
+                clearColor: "#000",
+            },
+            unrealBloomPass:{
+                strength: 0.3,
+                radius: 0.1,
+                threshold: 1,
             },
             ...ops
         }
@@ -55,7 +68,7 @@ export class Engine extends Scene {
         // 初始化渲染器
         this.renderer = new WebGLRenderer({
             canvas: this.dom,
-            antialias: true,
+            antialias: true
         });
         // 设置背景颜色
         this.renderer.setClearColor(options.renderer.clearColor, options.renderer.clearAlpha);
@@ -63,9 +76,10 @@ export class Engine extends Scene {
         // 允许阴影
         this.renderer.shadowMap.enabled = true;
         this.renderer.setPixelRatio(options.pixelRatio)
+        this.renderer.toneMapping = LinearToneMapping
+        //设置页面大小
+        this.renderer.setSize(options.width, options.height, true);
         
-        // 允许阴影
-        // this.renderer.shadowMap.enabled = true
         // 初始化场景
         // this.scene = new Scene();
         // 初始化相机，透视相机
@@ -82,8 +96,7 @@ export class Engine extends Scene {
         // 设置相机朝上方向
         this.camera.up = new Vector3(0, 1, 0)
 
-        //设置页面大小
-        this.renderer.setSize(options.width, options.height, true);
+        this.addComposer(options)
 
         // 控制器
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
@@ -141,9 +154,33 @@ export class Engine extends Scene {
         // 添加场景到页面上
         // this.dom.appendChild(this.renderer.domElement)
         // this.dom.appendChild(statsDom)
-
         // 渲染数据
         this.animate();
+    }
+    addComposer(options){
+        // 创建了一个RenderPass对象，用于将场景渲染到纹理上。
+        const renderScene = new RenderPass(this, this.camera);
+        // 创建了一个UnrealBloomPass对象，用于实现辉光效果。≈
+        const bloomPass = new UnrealBloomPass(
+            new Vector2(options.width, options.height),
+            1.5,
+            0.4,
+            0.85
+        );
+        // 设置发光参数,阈值、强度和半径。
+        bloomPass.strength = options.unrealBloomPass.strength;
+        bloomPass.radius = options.unrealBloomPass.radius;
+        bloomPass.threshold = options.unrealBloomPass.threshold;
+
+        // 创建了一个OutputPass对象，用于将最终渲染结果输出到屏幕上。
+        const outputPass = new OutputPass();
+
+        // 创建了一个EffectComposer对象，并将RenderPass、UnrealBloomPass和OutputPass添加到渲染通道中。
+        this.composer = new EffectComposer(this.renderer);
+        this.composer.addPass(renderScene);
+        this.composer.addPass(bloomPass);
+        this.composer.addPass(outputPass);
+        // initBloomGui(bloomPass)
     }
     addObject(...object: Object3D[]) {
         object.forEach(element => {
@@ -161,6 +198,6 @@ export class Engine extends Scene {
         this.panel.labelRender(this)
         this.controls.update();
         this.stats.update();
-        this.renderer.render(this, this.camera);
+        this.composer.render();
     }
 }

@@ -1,16 +1,25 @@
-import { AmbientLight, Object3D, PointLight, SpotLight } from "three";
-
+import { AmbientLight, CameraHelper, DirectionalLight, DirectionalLightHelper, Object3D, PointLight, SpotLight } from "three";
+import {addLightHelper} from "./Helper"
 export const lights: Object3D[] = [];
 // 创建环境光
 const ambientLight:AmbientLight = new AmbientLight(0x37383C, 0.1);
 
-// export const pointLight: PointLight = new PointLight(
-//     0xffffff,
-//     0.7,
-//     200,
-//     0.1
-// )
-// pointLight.position.set(40,40,40)
+export const pointLight: PointLight = new PointLight(
+    0xffffff,
+    1,
+    400,
+    0.1
+)
+pointLight.position.set(200,200,200)
+// 产生阴影
+pointLight.castShadow = true
+
+const directionalLight = new DirectionalLight(0xFFFFFF, 1);
+directionalLight.position.set(200,200,400)
+directionalLight.castShadow = true;
+
+// 光源
+// addLightHelper(directionalLight)
 
 // 聚光灯
 // export const spotLight: SpotLight = new SpotLight(
@@ -25,4 +34,4 @@ const ambientLight:AmbientLight = new AmbientLight(0x37383C, 0.1);
 // 产生阴影
 // spotLight.castShadow = true
 
-lights.push(ambientLight)
+lights.push(ambientLight, pointLight, directionalLight)

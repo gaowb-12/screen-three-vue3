@@ -1,7 +1,8 @@
 import fragmentShader from "@/components/Shader/FlyLine/fragmentShader.glsl";
 import vertexShader from "@/components/Shader/FlyLine/vertexShader.glsl";
-import { Vector3, BufferGeometry, Line, Color, ShaderMaterial, AdditiveBlending, QuadraticBezierCurve3, Clock, Mesh, Object3D } from 'three';
+import { Vector3, Line, Color, ShaderMaterial, AdditiveBlending, QuadraticBezierCurve3, Clock, Mesh, Object3D, Vector2, Shape, ExtrudeGeometry, MeshStandardMaterial, DoubleSide, BufferGeometry, BufferAttribute } from 'three';
 import { Engine } from "./Engine";
+import { MeshLine, MeshLineMaterial, MeshLineRaycast } from 'three.meshline';
 
 interface FlyOptions {
     uColor: Color; // 飞线颜色
@@ -9,7 +10,7 @@ interface FlyOptions {
     uDuration: number; // 动画执行周期
 }
 const flyOptionsDefault: FlyOptions = {
-    uColor: new Color(0xffff00),
+    uColor: new Color(0xFFCC7E),
     uBgColor: new Color(0xff0000), 
     uDuration: 4.0,
 }
@@ -17,8 +18,8 @@ const flyOptionsDefault: FlyOptions = {
 export const createFlyingLines = (
     positions: Vector3[][], 
     flyOptions: FlyOptions = flyOptionsDefault
-): Line[] => {
-    const lines: Line[] = []
+): Mesh[] => {
+    const lines: Mesh[] = []
     for (let i = 0; i < positions.length; i++) {
         const [start, end] = positions[i];
         const length = start.distanceTo(end);
@@ -29,10 +30,28 @@ export const createFlyingLines = (
             end.clone()
         );
         const points = curve.getPoints(50);
-        const geometry = new BufferGeometry().setFromPoints(points);
+        // const geometry = new BufferGeometry().setFromPoints(points);
 
-        // 自定义着色器，控制飞线效果
-        const material = new ShaderMaterial({
+        // 虚线
+        let linePoints = points.map(point=>([point.x, point.y, point.z]))
+        //创建线的几何体
+        let line = new MeshLine();
+        //设置构成这条线需要的几个点
+        line.setPoints(linePoints.flat());
+        //设置线段需要的材质
+        let material = new MeshLineMaterial({
+            color: new Color(0xFFCC7E),
+            lineWidth: 1,
+            //dashArray和dashRatio都是构成虚线的影响因素
+            dashArray: 0.005,
+            dashRatio: 0.5,
+            dashOffset: 0.1, // 新增
+            repeat: new Vector2(2, 1),
+            transparent: true,
+            opacity:0.8
+        });
+        // // 自定义着色器，控制飞线效果
+        const shaderMaterial = new ShaderMaterial({
             fragmentShader,
             vertexShader,
             uniforms: {
@@ -45,9 +64,21 @@ export const createFlyingLines = (
             transparent: true,
             blending: AdditiveBlending,
         });
-        // 将飞线添加到场景中
-        const line = new Line(geometry, material);
-        lines.push(line)
+        // material.transparent = true;//虚线功能//只要开启虚线功能后,dashArray和dashRatio才会生效
+        const mesh = new Mesh(line, material);//网格=几何体+材质
+        mesh.renderOrder = 10
+        
+        // // 将飞线添加到场景中
+        // const line = new Line(geometry, material);
+
+        mesh.userData={
+            index: i,
+            ...mesh.userData
+        }
+        mesh.name="飞线"
+        mesh.raycast = MeshLineRaycast
+        
+        lines.push(mesh)
     }
     
     return lines

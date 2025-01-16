@@ -10,9 +10,9 @@ export const useThreeCity = (canvas: HTMLCanvasElement, ops?:any) => {
       near: 0.1,
       far: 8000,
       position: {
-          x: -971,
-          y: 1852,
-          z: 439,
+          x: -630,
+          y: 375,
+          z: -22,
       },
     },
     pixelRatio: sizes.pixelRatio,
@@ -25,7 +25,7 @@ export const useThreeCity = (canvas: HTMLCanvasElement, ops?:any) => {
     // 灯光
   ...lights,
   // 辅助器
-  // ...helpers,
+  ...helpers,
   );
   // 加载外部模型
   loadCharactor(S);

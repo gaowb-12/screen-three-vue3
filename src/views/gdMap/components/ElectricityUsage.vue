@@ -1,6 +1,6 @@
 <template>
   <div class="right-card">
-    <m-card title="电子商务行业企业跨境传输路径情况" sub-title="DIANGZISHANGWU HANGYE QIYE KUAJING SHUANSHULUJINGQINGKUANG" width="900">
+    <m-card title="电子商务行业企业跨境传输路径情况" sub-title="DIANGZISHANGWU HANGYE QIYE KUAJING SHUANSHULUJINGQINGKUANG" width="980">
       <div class="container">
         <el-table :data="tableData" height="250" style="width: 100%">
           <el-table-column prop="company" label="名称" width="180" />

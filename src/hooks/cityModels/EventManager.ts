@@ -107,7 +107,7 @@ export class EventManager extends EventDispatcher<dispatchEventParameter>{
             // 设置射线，根据相机跟鼠标位置进行设置
             raycaster.setFromCamera(mouse,  this.camera)
             // 通过射线获取交叉的物体
-            const intersectObjects = raycaster.intersectObjects(this.scene.children, false)
+            const intersectObjects = raycaster.intersectObjects(this.scene.children, true)
             this.dispatchEvent({
                 type: "click",
                 intersectObjects

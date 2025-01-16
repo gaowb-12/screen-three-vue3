@@ -158,7 +158,7 @@ body {
       z-index: 4;
       // width: 398px;
       width: calc(100% - 480px);
-      left: 480px;
+      left: 560px;
       top: auto;
       bottom: 256px;
       perspective: 800px;
@@ -176,7 +176,7 @@ body {
           skewY(0deg);
         .right-card {
           &:nth-of-type(1){
-            width: 398px;
+            // width: 398px;
             margin-right: 20px;
           }
         }
