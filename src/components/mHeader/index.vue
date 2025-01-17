@@ -4,12 +4,12 @@
       <div class="m-header-title">{{ title }}</div>
       <div class="m-header-subtext">{{ subText }}</div>
     </div>
-    <div class="m-header-left" style="color: #fff">
+    <!-- <div class="m-header-left" style="color: #fff">
       <slot name="left"></slot>
-    </div>
+    </div> -->
     <div class="m-header-right">
-    <!-- <slot name="right"></slot> -->
-    <Time />
+      <!-- <slot name="right"></slot> -->
+      <Time />
     </div>
     <div class="m-header-line">
       <!-- <mSvglineAnimation
@@ -59,18 +59,11 @@ defineProps({
   height: 90px;
   z-index: 2;
   &-wrap {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-
-    width: 1920px;
     height: 96px;
-    margin: 0 auto;
     background: url("~@/assets/images/header-bg.png");
     background-size: 100%;
     text-align: left;
     box-sizing: border-box;
-    padding-top: 10px;
     padding-left: 30px;
   }
 
@@ -88,7 +81,8 @@ defineProps({
     font-size: 18px;
     font-weight: 300;
     font-family: "D-DIN", "DingTalk", "JinBuTi";
-    line-height: 14.4px;
+    font-style: italic;
+    line-height: 20px;
     color: rgba(178, 178, 178, 0.58);
     box-shadow: 3px 3px 4px 0px rgba(0, 0, 0, 0.25);
     letter-spacing: 0.04em;
@@ -102,8 +96,12 @@ defineProps({
   &-right {
     color: #fff;
     position: absolute;
-    top: 47px;
+    top: 50%;
     right: 32px;
+    transform: translateY(-50%);
+    .year{
+      margin-top: 6px;
+    }
   }
   &-line {
     &-left {

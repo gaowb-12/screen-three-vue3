@@ -21,9 +21,9 @@
       <div class="bottom-wrap">
         <div class="bottom-wrap-3d">
           <!-- 合作企业 -->
-          <ProportionPopulationConsumption></ProportionPopulationConsumption>
+          <ProportionPopulationConsumption @clickPie="clickPie"></ProportionPopulationConsumption>
           <!-- 电子商务行业企业跨境传输路径情况 -->
-          <ElectricityUsage></ElectricityUsage>
+          <ElectricityUsage :pieData="pieData"></ElectricityUsage>
         </div>
       </div>
       <!-- 底部托盘 -->
@@ -77,20 +77,12 @@
 import { shallowRef, ref, reactive, onMounted, onBeforeUnmount, defineAsyncComponent, provide  } from "vue"
 import mapScene from "./map.vue"
 import mHeader from "@/components/mHeader/index.vue"
-import mCountCard from "@/components/mCountCard/index.vue"
-import mMenu from "@/components/mMenu/index.vue"
-import mRadar from "@/components/mRadar/index.vue"
-import mMenuItem from "@/components/mMenuItem/index.vue"
 import mSvglineAnimation from "@/components/mSvglineAnimation/index.vue"
 import BulkCommoditySalesChart from "./components/BulkCommoditySalesChart.vue"
 import YearlyEconomyTrend from "./components/YearlyEconomyTrend.vue"
-import EconomicTrendChart from "./components/EconomicTrendChart.vue"
 import DistrictEconomicIncome from "./components/DistrictEconomicIncome.vue"
-import PurposeSpecialFunds from "./components/PurposeSpecialFunds.vue"
 import ProportionPopulationConsumption from "./components/ProportionPopulationConsumption.vue"
 import ElectricityUsage from "./components/ElectricityUsage.vue"
-import QuarterlyGrowthSituation from "./components/QuarterlyGrowthSituation.vue"
-// import City from './city/index.vue'
 
 import { Assets } from "./assets.js"
 import emitter from "@/utils/emitter"
@@ -104,6 +96,8 @@ const City = defineAsyncComponent(() =>
 const assets = shallowRef()
 const mapSceneRef = ref()
 const isCity = ref(false)
+const pieData = ref()
+
 const state = reactive({
   // 进度
   progress: 0,
@@ -175,7 +169,10 @@ function initAssets(onLoadCallback) {
     onLoadCallback && onLoadCallback()
   })
 }
-
+function clickPie(params){
+  console.log("--饼图点击",params)
+  pieData.value = params.data
+}
 // 隐藏loading
 async function hideLoading() {
   return new Promise<void>((resolve, reject) => {

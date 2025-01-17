@@ -50,43 +50,105 @@ export class Line {
   }
 
   create(data) {
-    const { type, visibelProvince } = this.config;
+    const { type, visibelProvince, currentGeoName } = this.config;
     let features = data.features;
     let lineGroup = new Group();
-    for (let i = 0; i < features.length; i++) {
-      const element = features[i];
-      let group = new Group();
-      group.name = "meshLineGroup" + i;
-      if (element.properties.name === visibelProvince) {
-        continue;
-      }
-      element.geometry.coordinates.forEach((coords) => {
-        const points = [];
-        let line = null;
+    // for (let i = 0; i < features.length; i++) {
+    //   const element = features[i];
+    //   let group = new Group();
+    //   group.name = "meshLineGroup" + i;
+    //   if (element.properties.name === visibelProvince) {
+    //     continue;
+    //   }
+    //   element.geometry.coordinates.forEach((coords) => {
+    //     const points = [];
+    //     let line = null;
 
-        if (type === "Line2") {
-          coords[0].forEach((item) => {
-            const [x, y] = this.geoProjection(item);
-            points.push(x, -y, 0);
-          });
-          line = this.createLine2(points);
-        } else if (type === "Line3") {
-          coords[0].forEach((item) => {
-            const [x, y] = this.geoProjection(item);
-            points.push(new Vector3(x, -y, 0));
-          });
-          line = this.createLine3(points);
-        } else {
-          coords[0]?.forEach((item) => {
-            const [x, y] = this.geoProjection(item);
-            points.push(new Vector3(x, -y, 0));
-            line = this.createLine(points);
-          });
+    //     if (type === "Line2") {
+    //       coords[0]?.forEach((item) => {
+    //         const [x, y] = this.geoProjection(item);
+    //         points.push(x, -y, 0);
+    //       });
+    //       line = this.createLine2(points);
+    //     } else if (type === "Line3") {
+    //       coords[0]?.forEach((item) => {
+    //         const [x, y] = this.geoProjection(item);
+    //         points.push(new Vector3(x, -y, 0));
+    //       });
+    //       console.log("--所有的外轮廓坐标--",points)
+    //       if(points.length) line = this.createLine3(points);
+    //     } else {
+    //       coords[0]?.forEach((item) => {
+    //         const [x, y] = this.geoProjection(item);
+    //         points.push(new Vector3(x, -y, 0));
+    //         line = this.createLine(points);
+    //       });
+    //     }
+    //     // 将线条插入到组中
+    //     if(line) group.add(line);
+    //   });
+    //   lineGroup.add(group);
+    // }
+    
+    if(type !== "Line3"){
+      for (let i = 0; i < features.length; i++) {
+        const element = features[i];
+        let group = new Group();
+        group.name = "meshLineGroup" + i;
+        if (element.properties.name === visibelProvince) {
+          continue;
         }
-        // 将线条插入到组中
-        if(line) group.add(line);
-      });
-      lineGroup.add(group);
+        element.geometry.coordinates.forEach((coords) => {
+          const points = [];
+          let line = null;
+  
+          if (type === "Line2") {
+            coords[0]?.forEach((item) => {
+              const [x, y] = this.geoProjection(item);
+              points.push(x, -y, 0);
+            });
+            line = this.createLine2(points);
+          } else if (type === "Line3") {
+            coords[0]?.forEach((item) => {
+              const [x, y] = this.geoProjection(item);
+              points.push(new Vector3(x, -y, 0));
+            });
+            line = this.createLine3(points);
+          } else {
+            coords[0]?.forEach((item) => {
+              const [x, y] = this.geoProjection(item);
+              points.push(new Vector3(x, -y, 0));
+              line = this.createLine(points);
+            });
+          }
+          // 将线条插入到组中
+          if(line) group.add(line);
+        });
+        lineGroup.add(group);
+      }
+    }else{
+      // 获取地图外轮廓坐标集合，用来生成地图外轮廓动画
+      for (let i = 0; i < features.length; i++) {
+        const element = features[i];
+        let group = new Group();
+        group.name = "meshLineGroup" + i;
+        if (element.properties.name === currentGeoName) {
+          element.geometry.coordinates.forEach((coords) => {
+            const points = [];
+            coords[0]?.forEach((item) => {
+              const [x, y] = this.geoProjection(item);
+              points.push(new Vector3(x, -y, 0));
+            });
+            console.log("--所有的外轮廓坐标",points)
+            if(points.length){
+              let line = this.createLine3(points);
+              group.add(line);
+            }
+          });
+          break;
+        }
+        lineGroup.add(group);
+      }
     }
     return lineGroup;
   }

@@ -1,9 +1,9 @@
 <template>
   <div class="right-card">
-    <m-card title="合作企业" sub-title="HEZUOQIYE" width="290">
+    <m-card title="合作企业" sub-title="HEZUOQIYE" :width="290">
       <div class="population-proportion">
         <div class="population-proportion-chart">
-          <v-chart ref="vChart" :option="option" :autoresize="true" />
+          <v-chart ref="chart" :option="option" :autoresize="true" />
           <!-- <div class="label-name">消费占比</div> -->
         </div>
         <div class="pie-legend">
@@ -17,12 +17,30 @@
     </m-card>
   </div>
 </template>
-<script setup>
+<script setup lang="ts">
 import { ref, reactive, onMounted, onBeforeUnmount, nextTick } from "vue"
 import mCard from "@/components/mCard/index.vue"
-import VChart from "vue-echarts"
+
+interface SeriesData{
+  name: string,
+  value: number | string
+}
+interface State{
+  selected: {
+    [key: string]: boolean
+  },
+  pieDataColor: string[],
+  pieData: SeriesData[]
+}
+const emit = defineEmits<{
+  clickPie: any
+}>()
+
+const chart = ref()
+
 let colors = ["#09BD2B", "#FF891D", "#1890FF", "#3BD3BF", "#9D1DFF", "#D9D9D9"]
-const state = reactive({
+const state = reactive<State>({
+  selected: {"0": true},
   pieDataColor: colors,
   pieData: [
     {
@@ -54,8 +72,7 @@ const option = ref({
     borderColor:"transparent"
   },
 
-  series: [
-    {
+  series: {
       name: "",
       type: "pie",
       itemStyle: {
@@ -63,39 +80,30 @@ const option = ref({
         // borderColor: "rgba(26, 57, 77,1)",
         borderRadius: 2
       },
+      selected: state.selected,
       padAngle: 5,
       label: { show: false },
       radius: ["55%", "70%"],
       color: colors,
-      // color: ["#c487ee", "#deb140", "#49dff0", "#034079", "#6f81da", "#00ffb4"],
-
-      data: [
-        {
-          value: 40,
-          name: "类型1类型1类型1",
-        },
-        {
-          value: 25,
-          name: "类型2",
-        },
-        {
-          value: 20,
-          name: "类型3",
-        },
-        {
-          value: 15,
-          name: "类型4",
-          // itemStyle: {
-          //   //颜色渐变
-          //   color: new echarts.graphic.LinearGradient(0, 0, 1, 1, [
-          //     { offset: 0, color: "rgba(153, 105, 38, 1)" },
-          //     { offset: 1, color: "rgba(255, 200, 89, 1)" },
-          //   ]),
-          // },
-        },
-      ],
+      selectedMode: 'single', // 启用单选模式
+      data: state.pieData,
     },
-  ],
+});
+function clickPie(){
+  chart.value.chart.on('click', (params) => {
+    // 更新选中状态
+    state.selected = { [params.dataIndex]: true };
+    chart.value.chart.setOption({
+      ...option,
+      series: {
+        selected: state.selected
+      },
+    });
+    emit("clickPie", params);
+  });
+}
+onMounted(()=>{
+  clickPie()
 })
 
 </script>
@@ -145,12 +153,6 @@ const option = ref({
   }
   // 饼图3d legend
   .pie-legend {
-    // display: flex;
-    // flex-direction: column;
-    // justify-content: space-between;
-    // align-items: center;
-    // flex-wrap: wrap;
-    // padding: 20px 0;
     overflow: auto;
     margin: 10px 0;
     padding-right: 15px;
@@ -165,7 +167,6 @@ const option = ref({
         width: 8px;
         height: 8px;
         border-radius: 8px;
-        // border: 2px solid #17e6c3;
         background: #17e6c3;
         box-sizing: border-box;
         margin-right: 10px;
@@ -205,6 +206,7 @@ const option = ref({
   display: flex;
   justify-content: space-around;
   height: 100%;
+  box-sizing: border-box;
   padding-right: 10px;
   background: rgba(26, 26, 26, 0.36);
   &-chart {
@@ -233,14 +235,16 @@ const option = ref({
       left: 50%;
       top: 50%;
       z-index: -1;
-      margin-left: -36px;
-      margin-top: -36px;
       content: "";
-      width: 72px;
-      height: 72px;
-      background: url("~@/assets/images/pie/pie-mid-circle.png") no-repeat;
-      background-size: cover;
-      animation: rotate360Animate 2s linear infinite;
+      width: 122px;
+      height: 122px;
+      transform: translate(-50%, -50%);
+      border: 1.5px solid #FFFFFF;
+      border-radius: 50%;
+      opacity: 0.3;
+      // background: url("~@/assets/images/pie/pie-mid-circle.png") no-repeat;
+      // background-size: cover;
+      // animation: rotate360Animate 2s linear infinite;
     }
   }
 }

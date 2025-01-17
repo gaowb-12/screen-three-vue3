@@ -1,6 +1,6 @@
 <template>
   <div class="left-card">
-    <m-card title="跨境传输情况" subTitle="KUAJINGCHUANSHUQINGKUANG" height="300">
+    <m-card title="跨境传输情况" subTitle="KUAJINGCHUANSHUQINGKUANG" height="340">
       <div class="container">
         <div class="item" v-for="item in items" :key="item.name">
           <div class="left">
@@ -29,7 +29,7 @@ const items = ref([
 </script>
 <style lang="scss" scoped>
   .container{
-    height: 300px;
+    height: 100%;
     box-sizing: border-box;
     background: rgba(26, 26, 26, 0.36);
     padding: 22px 8px;
@@ -41,6 +41,10 @@ const items = ref([
       justify-content: space-around;
       padding:20px 10px;
       width:45%;
+      margin-bottom: 15px;
+      &:nth-child(odd){
+        border-right: 1px solid rgba(202, 202, 202, 0.1);
+      }
       .left{
         display:flex;
         justify-content: space-around;
@@ -66,6 +70,20 @@ const items = ref([
         color:rgba(42, 228, 92, 1);
         .hidden{
           visibility:hidden;
+        }
+        .num{
+          &::before{
+            content: "";
+            display: inline-block;
+            width: 0;
+            height: 0;
+            border: 5px solid rgba(42, 228, 92, 1);
+            border-left-color: transparent;
+            border-right-color: transparent;
+            border-top-color: transparent;
+            border-bottom-width: 8px;
+            margin-right: 10px;
+          }
         }
       }
       

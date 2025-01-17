@@ -2,7 +2,8 @@ import { AmbientLight, CameraHelper, DirectionalLight, DirectionalLightHelper, O
 import {addLightHelper} from "./Helper"
 export const lights: Object3D[] = [];
 // 创建环境光
-const ambientLight:AmbientLight = new AmbientLight(0x37383C, 0.1);
+// const ambientLight:AmbientLight = new AmbientLight(0x37383C, 0.5);
+const ambientLight:AmbientLight = new AmbientLight(0x000000, 0);
 
 export const pointLight: PointLight = new PointLight(
     0xffffff,
@@ -15,11 +16,11 @@ pointLight.position.set(200,200,200)
 pointLight.castShadow = true
 
 const directionalLight = new DirectionalLight(0xFFFFFF, 1);
-directionalLight.position.set(200,200,400)
+directionalLight.position.set(300,300,400)
 directionalLight.castShadow = true;
 
 // 光源
-// addLightHelper(directionalLight)
+addLightHelper(directionalLight)
 
 // 聚光灯
 // export const spotLight: SpotLight = new SpotLight(

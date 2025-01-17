@@ -1,6 +1,6 @@
 <template>
   <div class="left-card">
-    <m-card title="TOP10数据出境国家" subTitle="KUAJINGCHUANSHUQINGKUANG" height="400">
+    <m-card title="TOP10数据出境国家" subTitle="KUAJINGCHUANSHUQINGKUANG" height="454">
       <div class="container">
         <div class="item" v-for="item in items" :key="item.name">
           <div class="name">{{item.name}}</div>
@@ -38,7 +38,8 @@ function getRate(value){
 <style lang="scss" scoped>
   .container{
     padding: 22px 8px;
-    height: 400px;
+    height: 100%;
+    box-sizing: border-box;
     overflow: auto;
     background: rgba(26, 26, 26, 0.36);
     .item{

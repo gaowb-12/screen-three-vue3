@@ -27,13 +27,15 @@ const items = ref([
     background: rgba(26, 26, 26, 0.36);
     padding: 22px 8px;
     display:flex;
-
+    height: 100%;
+    box-sizing: border-box;
     justify-content: space-around;
     .item{
       display:flex;
       align-items: center;
       flex-direction: column;
       padding:10px;
+      border-right: 1px solid rgba(202, 202, 202, 0.1);
       .icon{
         width: 40px;
         height: 40px;

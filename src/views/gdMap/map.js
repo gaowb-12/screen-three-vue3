@@ -58,27 +58,21 @@ function sortByValue(data) {
   return data
 }
 // 不同地图的缩放比例
-const mapScale = {
-  world:3,
-  country:18,
-  province: 300,
-};
 
 export class World extends Mini3d {
   constructor(canvas, assets, options) {
     super(canvas)
     this.mapName="world"
-    this.level="world"
     this.mapData = {
       world: worldData,
-      country: chinaData,
+      china: chinaData,
       province: provincesData
     }
     this.options = options
     // 中心坐标
     this.geoProjectionCenter = [0, 50]
     // 缩放比例
-    this.geoProjectionScale = mapScale[this.level]
+    this.geoProjectionScale = mapInfo[this.mapName].scale
     // 飞线中心
     this.flyLineCenter = [113.544372, 23.329249]
     // 地图拉伸高度
@@ -121,12 +115,12 @@ export class World extends Mini3d {
     this.defaultMaterial = null // 默认材质
     this.defaultLightMaterial = null // 高亮材质
     // 创建底部高亮
-    this.createBottomBg()
-    // 模糊边线
+    // this.createBottomBg()
+    // 地图整体的模糊背景
     this.createChinaBlurLine()
 
     // 扩散网格
-    this.createGrid()
+    // this.createGrid()
     // 旋转圆环
     this.createRotateBorder()
     // 创建地图
@@ -143,6 +137,10 @@ export class World extends Mini3d {
     this.createScatter()
     // 创建信息点
     this.createInfoPoint()
+    
+    // 创建轮廓
+    this.createStorke()
+
     // this.time.on("tick", () => {
     //   console.log(this.camera.instance.position);
     // });
@@ -252,68 +250,7 @@ export class World extends Mini3d {
       },
       "focusMapOpacity"
     )
-    this.allBar.map((item, index) => {
-      if (item.userData.name === "广州市") {
-        return false
-      }
-      tl.to(
-        item.scale,
-        {
-          duration: 1,
-          delay: 0.1 * index,
-          x: 1,
-          y: 1,
-          z: 1,
-          ease: "circ.out",
-        },
-        "bar"
-      )
-    })
-    this.allBarMaterial.map((item, index) => {
-      tl.to(
-        item,
-        {
-          duration: 1,
-          delay: 0.1 * index,
-          opacity: 1,
-          ease: "circ.out",
-        },
-        "bar"
-      )
-    })
 
-    this.allProvinceLabel.map((item, index) => {
-      let element = item.element.querySelector(".provinces-label-wrap")
-      let number = item.element.querySelector(".number .value")
-      let numberVal = Number(number.innerText)
-      let numberAnimate = {
-        score: 0,
-      }
-      tl.to(
-        element,
-        {
-          duration: 1,
-          delay: 0.2 * index,
-          translateY: 0,
-          opacity: 1,
-          ease: "circ.out",
-        },
-        "bar"
-      )
-      tl.to(
-        numberAnimate,
-        {
-          duration: 1,
-          delay: 0.2 * index,
-          score: numberVal,
-          onUpdate: showScore,
-        },
-        "bar"
-      )
-      function showScore() {
-        number.innerText = numberAnimate.score.toFixed(0)
-      }
-    })
     this.allGuangquan.map((item, index) => {
       tl.to(
         item.children[0].scale,
@@ -381,11 +318,8 @@ export class World extends Mini3d {
     this.focusMapGroup = focusMapGroup
     this.mapGroupContainer = mapGroup
     // 背景地图
-    // let { china, chinaTopLine } = this.createChina()
     // 焦点地图
     let { map, mapTop, mapLine } = this.createProvince()
-    // china.setParent(mapGroup)
-    // chinaTopLine.setParent(mapGroup)
     // 创建扩散
     // this.createDiffuse()
     map.setParent(focusMapGroup)
@@ -397,42 +331,6 @@ export class World extends Mini3d {
     mapGroup.rotation.x = -Math.PI / 2
     mapGroup.position.set(0, 0.2, 0)
     this.scene.add(mapGroup)
-    console.log("new map:",focusMapGroup,this.scene)
-    this.createBar()
-  }
-  createChina() {
-    let params = {
-      chinaBgMaterialColor: "#152c47",
-      lineColor: "#3f82cd",
-    }
-    let chinaData = this.assets.instance.getResource(this.mapName)
-    let chinaBgMaterial = new MeshLambertMaterial({
-      color: new Color(params.chinaBgMaterialColor),
-      transparent: true,
-      opacity: 1,
-    })
-    let china = new BaseMap(this, {
-      //position: new Vector3(0, 0, -0.03),
-      data: chinaData,
-      geoProjectionCenter: this.geoProjectionCenter,
-      geoProjectionScale: this.geoProjectionScale,
-      merge: true,
-      material: chinaBgMaterial,
-      renderOrder: 2,
-    })
-    let chinaTopLineMaterial = new LineBasicMaterial({
-      color: params.lineColor,
-    })
-    let chinaTopLine = new Line(this, {
-      // position: new Vector3(0, 0, -0.02),
-      data: chinaData,
-      geoProjectionCenter: this.geoProjectionCenter,
-      geoProjectionScale: this.geoProjectionScale,
-      material: chinaTopLineMaterial,
-      renderOrder: 3,
-    })
-    chinaTopLine.lineGroup.position.z += 0.01
-    return { china, chinaTopLine }
   }
   createProvince() {
     let mapJsonData = this.assets.instance.getResource(this.mapName)
@@ -458,8 +356,6 @@ export class World extends Mini3d {
       // fog: false,
     })
     let faceGradientShader = new GradientShader(faceMaterial, {
-      // uColor1: 0x2a6e92,
-      // uColor2: 0x102736,
       uColor1: 0x12bbe0,
       uColor2: 0x0094b5,
     })
@@ -483,8 +379,9 @@ export class World extends Mini3d {
         }
       })
     })
+    // 地图内部区域边界线
     this.mapLineMaterial = new LineBasicMaterial({
-      color: 0xffffff,
+      color: 0xE58D3D,
       // opacity: 0,
       // transparent: true,
       fog: false,
@@ -572,69 +469,6 @@ export class World extends Mini3d {
     }
     return [topMaterial, sideMaterial]
   }
-  createBar() {
-    let self = this
-    let data = sortByValue(this.mapData[this.level] || provincesData).filter((item, index) => index < 7)
-    const barGroup = new Group()
-    this.barGroup = barGroup
-    const factor = 0.7
-    const height = 4.0 * factor
-    const max = data[0].value
-    this.allBar = []
-    this.allBarMaterial = []
-    this.allGuangquan = []
-    this.allProvinceLabel = []
-    data.map((item, index) => {
-      let geoHeight = height * (item.value / max)
-      let material = new MeshBasicMaterial({
-        color: 0xffffff,
-        transparent: true,
-        opacity: 0,
-        depthTest: false,
-        fog: false,
-      })
-      const geo = new BoxGeometry(0.1 * factor, 0.1 * factor, geoHeight)
-      geo.translate(0, 0, geoHeight / 2)
-      const mesh = new Mesh(geo, material)
-      mesh.renderOrder = 5
-      let areaBar = mesh
-      let [x, y] = this.geoProjection(item.center)
-      areaBar.position.set(x, -y, this.depth + 0.45)
-      areaBar.scale.set(1, 1, 0)
-      areaBar.userData = { ...item }
-      let guangQuan = this.createQuan(new Vector3(x, this.depth + 0.44, y), index)
-      let hg = this.createHUIGUANG(geoHeight, index > 3 ? 0xfffef4 : 0x77fbf5)
-      areaBar.add(...hg)
-      barGroup.add(areaBar)
-      barGroup.rotation.x = -Math.PI / 2
-      let barLabel = labelStyle04(item, index, new Vector3(x, -y, this.depth + 1.1 + geoHeight))
-      this.allBar.push(areaBar)
-      this.allBarMaterial.push(material)
-      // 柱子底座旋转光圈
-      this.allGuangquan.push(guangQuan)
-      // this.allProvinceLabel.push(barLabel)
-    })
-    this.scene.add(barGroup)
-    function labelStyle04(data, index, position) {
-      let label = self.label3d.create("", "provinces-label", false)
-      label.init(
-        `<div class="provinces-label ${index > 4 ? "yellow" : ""}">
-      <div class="provinces-label-wrap">
-        <div class="number"><span class="value">${data.value}</span><span class="unit">万人</span></div>
-        <div class="name">
-          <span class="zh">${data.name}</span>
-          <span class="en">${data.enName.toUpperCase()}</span>
-        </div>
-        <div class="no">${index + 1}</div>
-      </div>
-    </div>`,
-        position
-      )
-      self.label3d.setLabelStyle(label, 0.01, "x")
-      label.setParent(self.labelGroup)
-      return label
-    }
-  }
   // 移除所有子节点
   removeAllChildren(parent) {
     while (parent.children.length > 0) {
@@ -683,8 +517,6 @@ export class World extends Mini3d {
     mapGroup.rotation.x = -Math.PI / 2
     mapGroup.position.set(0, 0.5, 0)
     this.scene.add(mapGroup)
-    console.log("new map:",focusMapGroup,this.scene)
-    this.createBar()
     this.createEvent()
     // 创建飞线
     this.createFlyLine()
@@ -696,6 +528,8 @@ export class World extends Mini3d {
     this.createScatter()
     // 创建信息点
     this.createInfoPoint()
+    // 创建地图轮廓描边
+    this.createStorke()
   }
   removeRelatedEvent(){
     this.interactionManager.dispose();
@@ -706,38 +540,31 @@ export class World extends Mini3d {
     this.removeAllChildren(this.flyLineFocusGroup)
     this.removeAllChildren(this.labelGroup)
     this.removeAllChildren(this.InfoPointGroup)
-    this.barGroup.parent.remove(this.barGroup)
     this.quanGroup.parent.remove(this.quanGroup)
     this.flyLineGroup.parent.remove(this.flyLineGroup)
     this.scatterGroup.parent.remove(this.scatterGroup)
     this.removeInfoPoint()
-    this.allBar = []
-    this.allBarMaterial = []
     this.allGuangquan = []
-    this.allProvinceLabel = []
   }
   // 下钻
-  downDrill(mapInfo){
-    if(mapInfo.userData.name == 'China' || mapInfo.userData.name == '北京市'){
+  downDrill(itemMapInfo){
+    if(itemMapInfo.userData.name == 'China' || itemMapInfo.userData.name == '北京市'){
       this.removeAllChildren(this.mapGroupContainer);
-      // this.removeAllChildren(this.barGroup);
       this.removeAllbar()
-      if(mapInfo.userData.name == 'China'){
-        this.options.changeIsCity&&this.options.changeIsCity()
+      if(itemMapInfo.userData.name == 'China'){
+        // this.options.changeIsCity&&this.options.changeIsCity()
         // 点击中国
-        // this.mapName = "china"
-        // this.level="country"
-        // this.geoProjectionCenter = [104.114, 37.550];
-      }else if(mapInfo.userData.name == '北京市'){
+        this.mapName = "china"
+        this.geoProjectionCenter = [104.114, 37.550];
+      }else if(itemMapInfo.userData.name == '北京市'){
         // 点击广东
         this.mapName = "beijing"
-        this.level="province"
         this.geoProjectionCenter = [116.486409,39.921489]
-      }else if(mapInfo.userData.name == '朝阳区'){
+      }else if(itemMapInfo.userData.name == '朝阳区'){
         this.options.changeIsCity&&this.options.changeIsCity()
       }
         
-      this.geoProjectionScale = mapScale[this.level]
+      this.geoProjectionScale = mapInfo[this.mapName].scale
   
       this.toggleMap()
     }
@@ -781,6 +608,7 @@ export class World extends Mini3d {
       })
     })
   }
+  // 辉光
   createHUIGUANG(h, color) {
     let geometry = new PlaneGeometry(0.35, h)
     geometry.translate(0, h / 2, 0)
@@ -915,6 +743,7 @@ export class World extends Mini3d {
     mesh.position.set(0, -0.7, 0)
     this.scene.add(mesh)
   }
+  // 地图背景
   createChinaBlurLine() {
     let geometry = new PlaneGeometry(147, 147)
     const texture = this.assets.instance.getResource("chinaBlurLine")
@@ -1007,7 +836,7 @@ export class World extends Mini3d {
       texture.offset.x -= 0.006
     })
     
-    let data = (this.mapData[this.level] || provincesData).filter((item, index) => index < 7)
+    let data = (this.mapData[this.mapName] || provincesData).filter((item, index) => index < 7)
     data
       .map((city) => {
         let [x, y] = this.geoProjection(city.center)
@@ -1072,7 +901,7 @@ export class World extends Mini3d {
     //   transparent: true,
     //   depthTest: false,
     // })
-    // let infodata = (this.mapData[this.level] || provincesData).filter((item, index) => index < 7)
+    // let infodata = (this.mapData[this.mapName] || provincesData).filter((item, index) => index < 7)
     // let max = infodata.reduce((pre, item)=>(item.value >= pre ? item.value : pre), 0);
     // infodata.map((data) => {
     //   const sprite = new Sprite(material)
@@ -1089,6 +918,7 @@ export class World extends Mini3d {
     this.InfoPointGroup.parent.remove(this.InfoPointGroup)
     this.infoLabelElement = []
   }
+  // 创建地图标记，以及提示信息
   createInfoPoint() {
     let self = this
     this.InfoPointGroup = new Group()
@@ -1098,10 +928,11 @@ export class World extends Mini3d {
     this.infoPointIndex = 0
     this.infoPointLabelTime = null
     this.infoLabelElement = []
+    this.allGuangquan = [] // 存储所有标记点底座旋转光圈
     let label3d = this.label3d
     const texture = this.assets.instance.getResource("point")
     let colors = [0xfffef4, 0x77fbf5]
-    let infodata = (this.mapData[this.level] || provincesData).filter((item, index) => index < 7)
+    let infodata = (this.mapData[this.mapName] || provincesData).filter((item, index) => index < 7)
     let max = infodata.reduce((pre, item)=>(item.value >= pre ? item.value : pre), 0);
     infodata.map((data, index) => {
       const material = new SpriteMaterial({
@@ -1116,6 +947,11 @@ export class World extends Mini3d {
       let scale = 0.7 + (data.value / max) * 0.4
       sprite.scale.set(scale, scale, scale)
       let [x, y] = this.geoProjection(data.center)
+
+      let guangQuan = this.createQuan(new Vector3(x, this.depth + 0.44, y), index)
+      // 柱子底座旋转光圈
+      this.allGuangquan.push(guangQuan)
+
       let position = [x, -y, this.depth + 0.7]
       sprite.position.set(...position)
       sprite.userData.position = [...position]
@@ -1155,19 +991,21 @@ export class World extends Mini3d {
       const [x, y] = self.geoProjection(data.center)
       label.init(
         ` <div class="info-point-wrap">
-          <div class="info-point-wrap-inner">
-            <div class="info-point-line">
-              <div class="line"></div>
-              <div class="line"></div>
-              <div class="line"></div>
+            <div class="info-point-label">
+              <div class="province"><span class="icon"></span>${data.name}<span class="arrow">>></span></div>
+              <div class="other">${data.name}</div>
             </div>
             <div class="info-point-content">
-              <div class="content-item"><span class="label">名称</span><span class="value">${data.name}</span></div>
-              <div class="content-item"><span class="label">PM2.5</span><span class="value">${data.value}ug/m²</span></div>
-              <div class="content-item"><span class="label">等级</span><span class="value">${data.enName}</span></div>
+              <div class="content-item">
+                <div class="label">传输数据量</div>
+                <div class="value">${data.value}</div>
+              </div>
+              <div class="content-item">
+                <div class="label">敏感数据量</div>
+                <div class="value">${data.value}</div>
+              </div>
             </div>
           </div>
-        </div>
       `,
         new Vector3(x, -y, self.depth + 1.9)
       )
@@ -1193,7 +1031,41 @@ export class World extends Mini3d {
       })
     }, 3000)
   }
+  // 地图流动轮廓
+  createStorke() {
+    let parentGeoName = mapInfo[this.mapName]?.parentGeoName || this.mapName;
+    let mapJsonData = this.assets.instance.getResource(parentGeoName)
+    // let mapJsonData = this.assets.instance.getResource(this.mapName)
+    const texture = this.assets.instance.getResource("pathLine3")
+    texture.wrapS = texture.wrapT = RepeatWrapping
+    texture.repeat.set(2, 1)
 
+    let pathLine = new Line(this, {
+      geoProjectionCenter: this.geoProjectionCenter,
+      geoProjectionScale: this.geoProjectionScale,
+      position: new Vector3(0, 0, this.depth + 0.24),
+      data: mapJsonData,
+      material: new MeshBasicMaterial({
+        color: 0x2bc4dc,
+        map: texture,
+        alphaMap: texture,
+        fog: false,
+        transparent: true,
+        opacity: 1,
+        blending: AdditiveBlending,
+      }),
+      // 当前的
+      currentGeoName: mapInfo[this.mapName].geoName,
+      type: "Line3",
+      renderOrder: 22,
+      tubeRadius: 0.03,
+    })
+    // 设置父级
+    this.focusMapGroup.add(pathLine.lineGroup)
+    this.time.on("tick", () => {
+      texture.offset.x += 0.005
+    })
+  }
   geoProjection(args) {
     return geoMercator().center(this.geoProjectionCenter).scale(this.geoProjectionScale).translate([0, 0])(args)
   }

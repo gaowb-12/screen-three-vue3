@@ -9,6 +9,7 @@ import side from "@/assets/texture/side.png"
 import ocean from "@/assets/texture/ocean-bg.png"
 import rotationBorder1 from "@/assets/texture/rotationBorder1.png"
 import rotationBorder2 from "@/assets/texture/rotationBorder2.png"
+import worldBlurLine from "@/assets/texture/maps/worldBlurLine.png"
 import chinaBlurLine from "@/assets/texture/chinaBlurLine.png"
 import guangquan1 from "@/assets/texture/guangquan01.png"
 import guangquan2 from "@/assets/texture/guangquan02.png"
@@ -62,6 +63,7 @@ export class Assets {
       { type: "Texture", name: "rotationBorder2", path: rotationBorder2 },
       { type: "Texture", name: "guangquan1", path: guangquan1 },
       { type: "Texture", name: "guangquan2", path: guangquan2 },
+      { type: "Texture", name: "worldBlurLine", path: worldBlurLine },
       { type: "Texture", name: "chinaBlurLine", path: chinaBlurLine },
       { type: "Texture", name: "ocean", path: ocean },
       { type: "Texture", name: "side", path: side },

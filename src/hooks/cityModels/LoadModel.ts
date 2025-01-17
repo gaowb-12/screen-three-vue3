@@ -115,16 +115,13 @@ export function loadCharactor(scene: Engine): Promise<GLTF>{
         let flyEndLines:any = [];
         model.traverse((child: any) => {
             child.castShadow = true
+            child.receiveShadow = true
             if (child.isMesh) {
-                // if(child.name){
-                //     scene.panel.addPanel(child);
-                // }
-                child.receiveShadow = true
                 // 加载不同的材质
                 if (["CITY_UNTRIANGULATED"].includes(child.name)) {
                     // 拿到模型线框的Geometry
-                    setCityLineMaterial(child, model);
-                    setCityMaterial(child, model);
+                    // setCityLineMaterial(child, model);
+                    // setCityMaterial(child, model);
                 } 
                 else if(child.name == "sx_0"){
                     // 河流
@@ -132,7 +129,7 @@ export function loadCharactor(scene: Engine): Promise<GLTF>{
                         color: new Color(0x000000), // 设置材质的基础颜色
                         emissive: 0x0069ff, // 设置自发光颜色
                         emissiveIntensity: 5, // 设置自发光强度
-                        shadowSide: DoubleSide
+                        // shadowSide: DoubleSide
                     });
                 }
                 else if(child.name == "路网"){
@@ -140,7 +137,7 @@ export function loadCharactor(scene: Engine): Promise<GLTF>{
                         color: new Color(0x000000), // 设置材质的基础颜色
                         emissive: 0xFF8324, // 设置自发光颜色
                         emissiveIntensity: 5, // 设置自发光强度
-                        shadowSide: DoubleSide
+                        // shadowSide: DoubleSide
                     });
                     // 调整位置
                     child.position.x += 60
@@ -148,15 +145,15 @@ export function loadCharactor(scene: Engine): Promise<GLTF>{
                 }
                 // start  "拜耳医药" "康乐保"
                 else if(["立方体","立方体001","立方体002","立方体003","平面009","平面012"].includes(child.name)){
-                    // 城市贴图
+                    // 城市贴图 (需要解决模型纹理)
                     child.material.map = cityTexture
                     if(["立方体","立方体001","立方体002","立方体003"].includes(child.name)){
                         // 拜尔
                         if(child.name === "立方体"){
                             // 开启调试纹理，设置纹理属性matrixAutoUpdate为false以后，纹理将通过matrix属性设置的矩阵更新纹理显示
-                            cityTexture.matrixAutoUpdate = false
-                            child.material.map.needsUpdate = true
-                            initTextureGui(child.material)
+                            // cityTexture.matrixAutoUpdate = false
+                            // child.material.map.needsUpdate = true
+                            // initTextureGui(child.material.map)
                         }
                         if(child.name === "立方体003"){
                             // 处理单个模型位置
@@ -175,10 +172,39 @@ export function loadCharactor(scene: Engine): Promise<GLTF>{
                         rasterOpacityTexture.center.x = 0
                     }
                     if(child.name === "平面008"){
-                        // 康乐保
-                        child.material.map = klbRasterOpacityTexture
+                        // 康乐保 (需要解决模型纹理)
+                        klbRasterOpacityTexture.matrixAutoUpdate = false
+                        // child.material = new MeshStandardMaterial({
+                        //     color: child.material.color, // 设置材质的基础颜色
+                        //     // shadowSide: DoubleSide,
+                        //     map: klbRasterOpacityTexture,
+                        //     transparent: true,
+                        //     emissive: child.material.emissive, // 设置自发光颜色
+                        //     emissiveIntensity: child.material.emissiveIntensity, // 设置自发光强度
+                        // });
+                        child.material = new ShaderMaterial({
+                            fragmentShader: rasterOpacityFragmentShader,
+                            vertexShader: rasterOpacityVertexShader,
+                            transparent: true,
+                            uniforms:{
+                                map: {
+                                    value: klbRasterOpacityTexture
+                                },
+                                emissive: {
+                                    // value: child.material.emissive
+                                    value: new Color(0x000000)
+                                }, // 设置自发光颜色
+                                emissiveIntensity: {
+                                    value: child.material.emissiveIntensity
+                                }, // 设置自发光强度
+                            },
+                        });
+                        // child.material.map = klbRasterOpacityTexture
+                        klbRasterOpacityTexture.matrixAutoUpdate = false
+                        klbRasterOpacityTexture.needsUpdate = true
+                        initTextureGui(klbRasterOpacityTexture)
                     }
-                } 
+                }
                 // 处理文本旋转
                 else if(["文本","文本001"].includes(child.name)){
                     (child as Mesh).rotateZ(Math.PI / 2);
@@ -194,25 +220,18 @@ export function loadCharactor(scene: Engine): Promise<GLTF>{
                     child.updateMatrixWorld(true)
                     flyEndLines.push(child)
                 } 
-                // end  "拜耳医药" "康乐保"
-                else if(child.name == "dm_0"){
-                    // 处理地面
-                    console.log("--地面--", child)
-                    child.material = new MeshStandardMaterial({
-                        color: new Color(0xffffff), // 设置材质的基础颜色
-                        shadowSide: DoubleSide
-                    });
-                    child.receiveShadow = true
-                } else if(child.name == "城市") {
+                else if(child.name == "城市") {
                     const material = new MeshStandardMaterial({
-                        color: "#241f38",
+                        color: new Color(0x241f38),
                     });
                     child.material = material;
                 } else {
                     //地面
-                    const material = new MeshBasicMaterial({
-                        color: "#cccccc",
-                    })
+                    // const material = new MeshBasicMaterial({
+                    //     color: child.material.color,
+                    //     map: child.material.map
+                    // })
+                    // child.material = material;
                 }
             }
             else if(child.name == "日光"){
@@ -227,7 +246,7 @@ export function loadCharactor(scene: Engine): Promise<GLTF>{
             } 
         })
         
-        let rectLightObject = model.getObjectByName("面光") as Object3D
+        // let rectLightObject = model.getObjectByName("面光") as Object3D
         // 添加面光源
         // const rectLight = new RectAreaLight(0xffffff, 0.1, 1.32, 1.32);
         // rectLight.scale.set(rectLightObject.scale.x, rectLightObject.scale.y, rectLightObject.scale.z)
@@ -235,7 +254,6 @@ export function loadCharactor(scene: Engine): Promise<GLTF>{
         // rectLight.rotation.set(rectLightObject.rotation.x, rectLightObject.rotation.y, rectLightObject.rotation.z)
         // rectLight.lookAt(0, 0, 0);
         // scene.add(rectLight);
-        console.log("--起点-终点--",flyStartLines, flyEndLines)
         if(flyStartLines[0]){
             // 定义飞线的起点终点
             let positions = flyEndLines.map(item=>(

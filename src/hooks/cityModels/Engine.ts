@@ -106,7 +106,7 @@ export class Engine extends Scene {
         //     MIDDLE: MOUSE.DOLLY,
         //     RIGHT: MOUSE.ROTATE,
         // }
-        // initEnv(this)
+        initEnv(this)
         // 初始变换控制器
         let transing = false; // 区分触发的事件
         this.eventManager = new EventManager({
@@ -187,6 +187,7 @@ export class Engine extends Scene {
             this.add(element)
         });
     }
+
     dispose(){
         this.dom = null;
         this.renderer.dispose()

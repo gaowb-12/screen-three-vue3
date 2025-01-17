@@ -50,6 +50,10 @@ export const createFlyingLines = (
             transparent: true,
             opacity:0.8
         });
+        // material.transparent = true;//虚线功能//只要开启虚线功能后,dashArray和dashRatio才会生效
+        const mesh = new Mesh(line, material);//网格=几何体+材质
+        mesh.renderOrder = 10
+
         // // 自定义着色器，控制飞线效果
         const shaderMaterial = new ShaderMaterial({
             fragmentShader,
@@ -64,12 +68,12 @@ export const createFlyingLines = (
             transparent: true,
             blending: AdditiveBlending,
         });
-        // material.transparent = true;//虚线功能//只要开启虚线功能后,dashArray和dashRatio才会生效
-        const mesh = new Mesh(line, material);//网格=几何体+材质
-        mesh.renderOrder = 10
-        
-        // // 将飞线添加到场景中
-        // const line = new Line(geometry, material);
+        //创建线的几何体
+        let flyLine = new MeshLine();
+        //设置构成这条线需要的几个点
+        flyLine.setPoints(linePoints.flat());
+        const flyMesh = new Mesh(flyLine, shaderMaterial);//网格=几何体+材质
+        flyMesh.name="虚线-飞线"
 
         mesh.userData={
             index: i,
@@ -78,7 +82,7 @@ export const createFlyingLines = (
         mesh.name="飞线"
         mesh.raycast = MeshLineRaycast
         
-        lines.push(mesh)
+        lines.push(mesh, flyMesh )
     }
     
     return lines

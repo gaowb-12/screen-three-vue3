@@ -46,79 +46,61 @@ defineExpose({
   bottom: 0;
   background-color: #000;
   .info-point {
-    background: rgba(0, 0, 0, 0.5);
-    color: #a3dcde;
-    font-size: 14px;
-    width: 170px;
-    height: 106px;
-    padding: 16px 12px 0;
-    margin-bottom: 30px;
+    background: rgba(0, 4, 5, 0.8);
+    // width: 200px;
+    padding: 15px;
     will-change: transform;
-    &-wrap {
-      &:after,
-      &:before {
-        display: block;
-        content: "";
-        position: absolute;
-        top: 0;
-        width: 15px;
-        height: 15px;
-        border-top: 1px solid #4b87a6;
-      }
-      &:before {
-        left: 0;
-        border-left: 1px solid #4b87a6;
-      }
-      &:after {
-        right: 0;
-        border-right: 1px solid #4b87a6;
-      }
-      &-inner {
-        &:after,
-        &:before {
-          display: block;
-          content: "";
-          position: absolute;
-          bottom: 0;
-          width: 15px;
-          height: 15px;
-          border-bottom: 1px solid #4b87a6;
-        }
-        &:before {
-          left: 0;
-          border-left: 1px solid #4b87a6;
-        }
-        &:after {
-          right: 0;
-          border-right: 1px solid #4b87a6;
-        }
-      }
-    }
-    &-line {
-      position: absolute;
-      top: 7px;
-      right: 12px;
+    border-top: 6px solid #1EFF62;
+    &-wrap {}
+    &-label {
       display: flex;
-      .line {
-        width: 5px;
-        height: 2px;
-        margin-right: 5px;
-        background: #17e5c3;
+      align-items: center;
+      justify-content: space-around;
+      margin-bottom: 5px;
+      .province {
+        margin-right: 20px;
+        font-family: "Alimama", "ShuHeiTi";
+        font-size: 24px;
+        font-weight: bold;
+        color: #1EFF62;
+        .icon{
+          display: inline-block;
+          vertical-align: middle;
+          width:40px;
+          height: 40px;
+          background: url(~@/assets/images/china-flag.png) no-repeat center;
+          background-size: contain;
+          background-position: 0 -4px;
+          margin-right: 5px;
+        }
+        .arrow{
+          transform: scale(0.8);
+          display: inline-block;
+        }
+      }
+      .other {
+        font-family: Open Sans;
+        font-size: 10px;
+        color: #ffffff;
+        max-width: 60px;
       }
     }
     &-content {
+      display: flex;
       .content-item {
-        display: flex;
-        height: 28px;
-        line-height: 28px;
-        background: rgba(35, 47, 58, 0.6);
-        margin-bottom: 5px;
+        flex: 1;
+        padding-left:10px ;
         .label {
-          width: 60px;
-          padding-left: 10px;
+          color: #888888;
+          font-family: Open Sans;
+          font-size: 12px;
+          margin-bottom: 10px;
         }
         .value {
           color: #ffffff;
+          font-family: Open Sans;
+          font-weight: bold;
+          font-size: 18px;
         }
       }
     }

@@ -1,9 +1,8 @@
 uniform sampler2D map;
-uniform sampler2D alphaMap;
+uniform vec3 emissive;
+uniform float emissiveIntensity;
 varying vec2 vUv;
 void main() {
-    vec4 color = texture2D(map, vUv);
-    vec4 alphaColor = texture2D(alphaMap, vUv);
-    float alpha = alphaColor.a; // 线性渐变的透明度
-    gl_FragColor = vec4(color.rgb, 1.0);
+    vec4 color = texture2D(map, sin(vUv) * 0.5 + 0.5);
+    gl_FragColor = vec4(emissive.rgb*emissiveIntensity + color.rgb*color.a, color.a);
 }

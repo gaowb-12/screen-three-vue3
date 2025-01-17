@@ -11,7 +11,7 @@
     </div>
     <div class="m-card-bd" :style="calcWidthHeightStyle">
       <div class="m-card-bd-bg" :style="calcWidthHeightStyle">
-        <svg
+        <!-- <svg
           :width="width"
           :height="height"
           :viewBox="`0 0 ${width} ${height}`"
@@ -39,7 +39,7 @@
         <img class="m-card-bd-bottom-left-arrow" src="@/assets/images/m-card/content-bottom-left-arrow.svg" alt="" />
         <img class="m-card-bd-bottom-right-arrow" src="@/assets/images/m-card/content-bottom-right-arrow.svg" alt="" />
         <img class="m-card-bd-middle-left-line" src="@/assets/images/m-card/content-middle-line.svg" alt="" />
-        <img class="m-card-bd-middle-right-line" src="@/assets/images/m-card/content-middle-line.svg" alt="" />
+        <img class="m-card-bd-middle-right-line" src="@/assets/images/m-card/content-middle-line.svg" alt="" /> -->
       </div>
       <div class="m-card-bd-content">
         <slot></slot>
@@ -203,13 +203,13 @@ onMounted(() => {
       position: absolute;
       // left: 22px;
       padding-left:22px;
+      box-sizing: border-box;
       width:100%;
       color: #fff;
-      font-weight: 400;
-      letter-spacing: 1.6px;
+      letter-spacing: 0.04em;
       height: 36px;
-      line-height: 32px;
-      font-family: "PingFangSc";
+      line-height: 36px;
+      font-family: "YouSheBiaoTiHei";
       font-size: 20px;
       font-weight: 600;
       white-space:nowrap;
@@ -217,7 +217,7 @@ onMounted(() => {
       // -webkit-background-clip: text;
       // -webkit-text-fill-color: transparent;
 
-      background: linear-gradient(0deg, #888888 24%, #FFFFFF 82%);
+      background: linear-gradient(0deg, #615c5c 11%, #FFFFFF 82%);;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -241,9 +241,9 @@ onMounted(() => {
       height: 36px;
       overflow: hidden;
       pointer-events: none;
-      border:2px solid rgba(255, 255, 255, 0.5);
-      border-left-width: 0;
-      border-right-width: 0 ;
+      border-width: 2px 0px 2px 0px;
+      border-style: solid;
+      border-image: linear-gradient(270deg, rgba(169, 169, 169, 0.9) 0%, rgba(255, 255, 255, 0) 99%) 2 0 2 0;
       background: linear-gradient(to right, transparent 0%, rgba(255, 255, 255, 0.272) 15%, transparent 64%, transparent 99%);
       img {
         width: 89px;
@@ -327,6 +327,9 @@ onMounted(() => {
       bottom: 0;
       pointer-events: all;
       overflow: hidden;
+      border-width: 0px 0px 2px 0px;
+      border-style: solid;
+      border-image: linear-gradient(270deg, rgba(169, 169, 169, 0.9) 0%, rgba(255, 255, 255, 0) 99%) 2 0 2 0;
     }
   }
 }

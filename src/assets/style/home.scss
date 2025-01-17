@@ -106,8 +106,8 @@ body {
       left: 32px;
       top: 126px;
       bottom: 50px;
-      perspective: 500px;
-      perspective-origin: 50% 50%;
+      // perspective: 500px;
+      // perspective-origin: 50% 50%;
       &-3d {
         position: absolute;
         left: 0;
@@ -160,9 +160,9 @@ body {
       width: calc(100% - 480px);
       left: 560px;
       top: auto;
-      bottom: 256px;
-      perspective: 800px;
-      perspective-origin: 50% 50%;
+      bottom: 246px;
+      // perspective: 800px;
+      // perspective-origin: 50% 50%;
       &-3d {
         position: absolute;
         left: 0;
