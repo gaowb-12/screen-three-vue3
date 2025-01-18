@@ -18,7 +18,7 @@ export default {
     beijing: {
         geoName: "北京市",
         parentGeoName:"china",
-        scale:300,
+        scale:400,
         assetsMapName: "beijing",
         mapLevel: "province",
         centerCoordinates: [116.405285, 39.904989]

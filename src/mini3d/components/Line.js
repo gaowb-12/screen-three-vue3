@@ -141,7 +141,7 @@ export class Line {
               const [x, y] = this.geoProjection(item);
               points.push(new Vector3(x, -y, 0));
             });
-            console.log("--所有的外轮廓坐标",points)
+            console.log("------所有的外轮廓坐标------",name,currentGeoName,points)
             if(points.length){
               let line = this.createLine3(points);
               group.add(line);

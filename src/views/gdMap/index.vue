@@ -14,17 +14,22 @@
           <!-- 累计出境数量 -->
           <YearlyEconomyTrend></YearlyEconomyTrend>
           <!-- TOP10数据出境国家 -->
-          <DistrictEconomicIncome></DistrictEconomicIncome>
+          <DistrictEconomicIncome v-if="!isClickCityPath"></DistrictEconomicIncome>
         </div>
       </div>
       <!-- 底边布局 图表 -->
-      <div class="bottom-wrap">
+      <div class="bottom-wrap" v-if="!isClickCityPath">
         <div class="bottom-wrap-3d">
           <!-- 合作企业 -->
           <ProportionPopulationConsumption @clickPie="clickPie"></ProportionPopulationConsumption>
           <!-- 电子商务行业企业跨境传输路径情况 -->
           <ElectricityUsage :pieData="pieData"></ElectricityUsage>
         </div>
+      </div>
+      <div class="bottom-wrap-flow" v-if="isClickCityPath" >
+        <!-- 底部流程图 -->
+        <FlowImage></FlowImage>
+        <img src="@/assets/images/city/赛诺菲-流程图.png" alt="" />
       </div>
       <!-- 底部托盘 -->
       <div class="bottom-tray">
@@ -81,6 +86,7 @@ import mSvglineAnimation from "@/components/mSvglineAnimation/index.vue"
 import BulkCommoditySalesChart from "./components/BulkCommoditySalesChart.vue"
 import YearlyEconomyTrend from "./components/YearlyEconomyTrend.vue"
 import DistrictEconomicIncome from "./components/DistrictEconomicIncome.vue"
+import FlowImage from "./components/FlowImage.vue"
 import ProportionPopulationConsumption from "./components/ProportionPopulationConsumption.vue"
 import ElectricityUsage from "./components/ElectricityUsage.vue"
 
@@ -90,12 +96,14 @@ import gsap from "gsap"
 import autofit from "autofit.js"
 
 const City = defineAsyncComponent(() =>
-  import('./city/index.vue')
+  // import('./city/index.vue')
+  import('./city/image.vue')
 );
 
 const assets = shallowRef()
 const mapSceneRef = ref()
 const isCity = ref(false)
+const isClickCityPath = ref(false)
 const pieData = ref()
 
 const state = reactive({
@@ -121,10 +129,21 @@ const state = reactive({
     },
   ],
 })
-function changeIsCity(){
+function changeIsCity(data){
+  console.log(data)
   isCity.value = !isCity.value
 }
 provide('changeIsCity', changeIsCity)
+
+function changCityPath(item){
+  isClickCityPath.value = !isClickCityPath.value
+}
+provide('changCityPath', changCityPath)
+
+function clickPie(params){
+  pieData.value = params.data
+}
+
 onMounted(() => {
   // 监听地图播放完成，执行事件
   emitter.$on("mapPlayComplete", handleMapPlayComplete)
@@ -168,10 +187,6 @@ function initAssets(onLoadCallback) {
   assets.value.instance.on("onLoad", () => {
     onLoadCallback && onLoadCallback()
   })
-}
-function clickPie(params){
-  console.log("--饼图点击",params)
-  pieData.value = params.data
 }
 // 隐藏loading
 async function hideLoading() {

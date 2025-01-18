@@ -182,6 +182,22 @@ body {
         }
       }
     }
+    .bottom-wrap-flow {
+      position: absolute;
+      z-index: 5;
+      width: calc(100% - 64px);
+      left: 32px;
+      top: auto;
+      bottom: 20px;
+      backdrop-filter: blur(31px);
+      img{
+        width:100%;
+        height: calc(100% - 36px);
+        position: absolute;
+        left: 0;
+        top: 36px;
+      }
+    }
     .bottom-tray {
       position: absolute;
       left: 50%;

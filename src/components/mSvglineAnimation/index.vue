@@ -20,7 +20,7 @@
           </circle>
         </mask>
       </defs>
-      <path class="path-line" :d="path" :stroke="color" :stroke-width="strokeWidth" :mask="`url(#${maskId})`" />
+      <path class="path-line" :d="path" :stroke="color" :stroke-width="strokeWidth" :mask="`url(#${maskId})`" @click="$emit('clickPath')" />
     </svg>
   </div>
 </template>

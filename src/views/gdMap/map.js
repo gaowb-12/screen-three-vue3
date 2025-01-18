@@ -58,7 +58,7 @@ import {initTextureGui} from "@/hooks/cityModels/gui"
 export class World extends Mini3d {
   constructor(canvas, assets, options) {
     super(canvas)
-    this.mapName="world"
+    this.mapName="beijing"
     this.mapData = {
       world: worldData,
       china: chinaData,
@@ -66,7 +66,7 @@ export class World extends Mini3d {
     }
     this.options = options
     // 中心坐标
-    this.geoProjectionCenter = [0, 50]
+    this.geoProjectionCenter = mapInfo[this.mapName].centerCoordinates
     // 缩放比例
     this.geoProjectionScale = mapInfo[this.mapName].scale
     // 飞线中心
@@ -82,7 +82,7 @@ export class World extends Mini3d {
     this.assets = assets
 
     this.scene.background = this.assets.instance.getResource("geoMapBgTexture")
-
+    
     // 相机初始位置
     this.camera.instance.position.set(-13.767695123014105, 220.990152163077308, 39.28228164159694)
     this.camera.instance.near = 0.1
@@ -500,22 +500,21 @@ export class World extends Mini3d {
   }
   // 下钻
   downDrill(itemMapInfo){
-    if(itemMapInfo.userData.name == 'China' || itemMapInfo.userData.name == '北京市'){
+    let names = ['China','北京市','朝阳区'];
+    if( names.includes(itemMapInfo.userData.name)){
       this.removeAllChildren(this.mapGroupContainer);
       this.removeAllbar()
       if(itemMapInfo.userData.name == 'China'){
-        // this.options.changeIsCity&&this.options.changeIsCity()
         // 点击中国
         this.mapName = "china"
-        this.geoProjectionCenter = [104.114, 37.550];
       }else if(itemMapInfo.userData.name == '北京市'){
         // 点击广东
         this.mapName = "beijing"
-        this.geoProjectionCenter = [116.486409,39.921489]
       }else if(itemMapInfo.userData.name == '朝阳区'){
-        this.options.changeIsCity&&this.options.changeIsCity()
+        this.options.changeIsCity&&this.options.changeIsCity(itemMapInfo)
       }
-        
+      
+      this.geoProjectionCenter = mapInfo[this.mapName].centerCoordinates
       this.geoProjectionScale = mapInfo[this.mapName].scale
   
       this.toggleMap()
@@ -970,13 +969,12 @@ export class World extends Mini3d {
       position: new Vector3(0, 0, this.depth + 0.24),
       data: mapJsonData,
       material: new MeshBasicMaterial({
-        color: 0x2bc4dc,
+        color: 0xE58D3D,
         map: texture,
         // alphaMap: texture,
-        fog: false,
         transparent: true,
         opacity: 1,
-        blending: AdditiveBlending,
+        // blending: AdditiveBlending,
       }),
       // 当前的
       currentGeoName: mapInfo[this.mapName].geoName,
