@@ -51,13 +51,7 @@ import gsap from "gsap"
 import emitter from "@/utils/emitter"
 import { InteractionManager } from "three.interactive"
 import mapInfo from "./map/enumInfo"
-
-
-function sortByValue(data) {
-  data.sort((a, b) => b.value - a.value)
-  return data
-}
-// 不同地图的缩放比例
+import {initTextureGui} from "@/hooks/cityModels/gui"
 
 export class World extends Mini3d {
   constructor(canvas, assets, options) {
@@ -82,7 +76,10 @@ export class World extends Mini3d {
     // 雾
     this.scene.fog = new Fog(0x102736, 1, 50)
     // 背景
-    this.scene.background = new Color(0x102736)
+    // this.scene.background = new Color(0x102736)
+    this.assets = assets
+
+    this.scene.background = this.assets.instance.getResource("geoMapBgTexture")
 
     // 相机初始位置
     this.camera.instance.position.set(-13.767695123014105, 220.990152163077308, 39.28228164159694)
@@ -91,8 +88,7 @@ export class World extends Mini3d {
     this.camera.instance.updateProjectionMatrix()
     // 创建交互管理
     this.interactionManager = new InteractionManager(this.renderer.instance, this.camera.instance, this.canvas)
-
-    this.assets = assets
+    
     this.needRemovedAssets = []
     // 创建环境光
     this.initEnvironment()
@@ -114,10 +110,8 @@ export class World extends Mini3d {
     // 鼠标移上移除的材质
     this.defaultMaterial = null // 默认材质
     this.defaultLightMaterial = null // 高亮材质
-    // 创建底部高亮
-    // this.createBottomBg()
     // 地图整体的模糊背景
-    this.createChinaBlurLine()
+    // this.createChinaBlurLine()
 
     // 扩散网格
     // this.createGrid()
@@ -133,8 +127,6 @@ export class World extends Mini3d {
     this.createFocus()
     // 创建粒子
     // this.createParticles()
-    // 创建散点图
-    this.createScatter()
     // 创建信息点
     this.createInfoPoint()
     
@@ -184,7 +176,6 @@ export class World extends Mini3d {
         ease: "circ.out",
         onComplete: () => {
           this.flyLineGroup.visible = true
-          this.scatterGroup.visible = true
           this.InfoPointGroup.visible = true
           // this.createInfoPointLabelLoop()
         },
@@ -348,8 +339,11 @@ export class World extends Mini3d {
       sideMaterial: sideMaterial,
       renderOrder: 9,
     })
+    
+    let mapTexture = this.assets.instance.getResource("geoMapBgTexture")
     let faceMaterial = new MeshStandardMaterial({
       color: 0xffffff,
+      // map: mapTexture,
       transparent: true,
       // opacity: 0.5,
       opacity: 1,
@@ -359,11 +353,11 @@ export class World extends Mini3d {
       uColor1: 0x12bbe0,
       uColor2: 0x0094b5,
     })
+    // 地图鼠标hover状态时材质
     this.defaultMaterial = faceMaterial
     this.defaultLightMaterial = this.defaultMaterial.clone()
-    this.defaultLightMaterial.color = new Color("rgba(115,208,255,1)")
-    // this.defaultLightMaterial.opacity = 0.8
-    
+    this.defaultLightMaterial.color = new Color("rgba(30, 233, 255, 0.41)")
+    // border: 2px solid #4EFFFF;
     let mapTop = new BaseMap(this, {
       geoProjectionCenter: this.geoProjectionCenter,
       geoProjectionScale: this.geoProjectionScale,
@@ -524,8 +518,6 @@ export class World extends Mini3d {
     this.createFocus()
     // 创建粒子
     // this.createParticles()
-    // 创建散点图
-    this.createScatter()
     // 创建信息点
     this.createInfoPoint()
     // 创建地图轮廓描边
@@ -542,7 +534,6 @@ export class World extends Mini3d {
     this.removeAllChildren(this.InfoPointGroup)
     this.quanGroup.parent.remove(this.quanGroup)
     this.flyLineGroup.parent.remove(this.flyLineGroup)
-    this.scatterGroup.parent.remove(this.scatterGroup)
     this.removeInfoPoint()
     this.allGuangquan = []
   }
@@ -726,38 +717,23 @@ export class World extends Mini3d {
       pointColor: 0x154d7d,
     })
   }
-  createBottomBg() {
-    let geometry = new PlaneGeometry(20, 20)
-    const texture = this.assets.instance.getResource("ocean")
-    texture.colorSpace = SRGBColorSpace
-    texture.wrapS = RepeatWrapping
-    texture.wrapT = RepeatWrapping
-    texture.repeat.set(1, 1)
-    let material = new MeshBasicMaterial({
-      map: texture,
-      opacity: 1,
-      fog: false,
-    })
-    let mesh = new Mesh(geometry, material)
-    mesh.rotation.x = -Math.PI / 2
-    mesh.position.set(0, -0.7, 0)
-    this.scene.add(mesh)
-  }
   // 地图背景
   createChinaBlurLine() {
-    let geometry = new PlaneGeometry(147, 147)
-    const texture = this.assets.instance.getResource("chinaBlurLine")
+    let geometry = new PlaneGeometry(120, 120)
+    const texture = this.assets.instance.getResource("worldBlurLine")
     texture.colorSpace = SRGBColorSpace
     texture.wrapS = RepeatWrapping
     texture.wrapT = RepeatWrapping
     texture.generateMipmaps = false
     texture.minFilter = NearestFilter
-    texture.repeat.set(1, 1)
+    texture.repeat.set(4, 4)
+    texture.matrixAutoUpdate = false
+    texture.needsUpdate = true
+    initTextureGui(texture)
     let material = new MeshBasicMaterial({
-      color: 0x3f82cd,
-      alphaMap: texture,
+      map: texture,
       transparent: true,
-      opacity: 0.5,
+      opacity: 0.6,
     })
     let mesh = new Mesh(geometry, material)
     mesh.rotateX(-Math.PI / 2)
@@ -888,32 +864,6 @@ export class World extends Mini3d {
     this.particles.enable = true
     this.particleGroup.visible = true
   }
-  createScatter() {
-    this.scatterGroup = new Group()
-    this.scatterGroup.visible = false
-    this.scatterGroup.rotation.x = -Math.PI / 2
-    this.scene.add(this.scatterGroup)
-    // const texture = this.assets.instance.getResource("arrow")
-    // const material = new SpriteMaterial({
-    //   map: texture,
-    //   color: 0xfffef4,
-    //   fog: false,
-    //   transparent: true,
-    //   depthTest: false,
-    // })
-    // let infodata = (this.mapData[this.mapName] || provincesData).filter((item, index) => index < 7)
-    // let max = infodata.reduce((pre, item)=>(item.value >= pre ? item.value : pre), 0);
-    // infodata.map((data) => {
-    //   const sprite = new Sprite(material)
-    //   sprite.renderOrder = 23
-    //   let scale = 0.1 + (data.value / max) * 0.2
-    //   sprite.scale.set(scale, scale, scale)
-    //   let [x, y] = this.geoProjection(data.center)
-    //   sprite.position.set(x, -y, this.depth + 0.45)
-    //   sprite.userData.position = [x, -y, this.depth + 0.45]
-    //   this.scatterGroup.add(sprite)
-    // })
-  }
   removeInfoPoint(){
     this.InfoPointGroup.parent.remove(this.InfoPointGroup)
     this.infoLabelElement = []
@@ -931,6 +881,7 @@ export class World extends Mini3d {
     this.allGuangquan = [] // 存储所有标记点底座旋转光圈
     let label3d = this.label3d
     const texture = this.assets.instance.getResource("point")
+    const activeTexture = this.assets.instance.getResource("pointActive")
     let colors = [0xfffef4, 0x77fbf5]
     let infodata = (this.mapData[this.mapName] || provincesData).filter((item, index) => index < 7)
     let max = infodata.reduce((pre, item)=>(item.value >= pre ? item.value : pre), 0);
@@ -944,8 +895,9 @@ export class World extends Mini3d {
       })
       const sprite = new Sprite(material)
       sprite.renderOrder = 23
-      let scale = 0.7 + (data.value / max) * 0.4
-      sprite.scale.set(scale, scale, scale)
+      // let scale = 0.7 + (data.value / max) * 0.4
+      // sprite.scale.set(scale, scale, scale)
+      sprite.scale.set(0.8, 0.8, 0.8)
       let [x, y] = this.geoProjection(data.center)
 
       let guangQuan = this.createQuan(new Vector3(x, this.depth + 0.44, y), index)

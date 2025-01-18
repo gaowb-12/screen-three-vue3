@@ -9,13 +9,14 @@ import side from "@/assets/texture/side.png"
 import ocean from "@/assets/texture/ocean-bg.png"
 import rotationBorder1 from "@/assets/texture/rotationBorder1.png"
 import rotationBorder2 from "@/assets/texture/rotationBorder2.png"
-import worldBlurLine from "@/assets/texture/maps/worldBlurLine.png"
 import chinaBlurLine from "@/assets/texture/chinaBlurLine.png"
 import guangquan1 from "@/assets/texture/guangquan01.png"
 import guangquan2 from "@/assets/texture/guangquan02.png"
 import huiguang from "@/assets/texture/huiguang.png"
 import arrow from "@/assets/texture/arrow.png"
-import point from "@/assets/texture/point1.png"
+// import point from "@/assets/texture/point1.png"
+import point from "@/assets/texture/maps/scatter.png"
+import pointActive from "@/assets/texture/maps/scatter-active.png"
 import flyLineFocus from "@/assets/texture/guangquan01.png"
 import mapFlyline from "@/assets/texture/flyline6.png"
 // 焦点贴图
@@ -24,6 +25,12 @@ import focusBarTexture from "@/assets/texture/focus/focus_bar.png"
 import focusBgTexture from "@/assets/texture/focus/focus_bg.png"
 import focusMidQuanTexture from "@/assets/texture/focus/focus_mid_quan.png"
 import focusMoveBgTexture from "@/assets/texture/focus/focus_move_bg.png"
+import worldBlurLine from "@/assets/texture/maps/geoWorldMapBgTexture.png"
+import beijinglurLine from "@/assets/texture/maps/geoBeijingMapBgTexture.png"
+import geoMapBgTexture from "@/assets/texture/maps/geoWorldMapBgTexture.png"
+import geoMapTexture from "@/assets/texture/maps/geoMapTexture.png"
+
+
 export class Assets {
   constructor() {
     this.init()
@@ -71,6 +78,7 @@ export class Assets {
       { type: "Texture", name: "mapFlyline", path: mapFlyline },
       { type: "Texture", name: "arrow", path: arrow },
       { type: "Texture", name: "point", path: point },
+      { type: "Texture", name: "pointActive", path: pointActive },
 
       // focus
       { type: "Texture", name: "focusArrows", path: focusArrowsTexture },
@@ -78,6 +86,8 @@ export class Assets {
       { type: "Texture", name: "focusBg", path: focusBgTexture },
       { type: "Texture", name: "focusMidQuan", path: focusMidQuanTexture },
       { type: "Texture", name: "focusMoveBg", path: focusMoveBgTexture },
+      { type: "Texture", name: "geoMapBgTexture", path: geoMapBgTexture },
+      { type: "Texture", name: "geoMapTexture", path: geoMapTexture },
     ]
     // 资源加载
     this.instance.loadAll(assets)
