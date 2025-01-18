@@ -2,10 +2,10 @@ export default {
     world:{
         geoName: "",
         parentGeoName:null,
-        scale: 3,
+        scale: 4,
         assetsMapName: "world",
         mapLevel: "world",
-        centerCoordinates: [0, 50]
+        centerCoordinates: [40, 60]
     },
     china:{
         geoName: "China",

@@ -11,8 +11,8 @@ export const initTextureGui = (map) => {
         repeatX: map.repeat.y ?? 1,
         repeatY: map.repeat.y ?? 1,
         rotation: map.rotation ?? 0,
-        centerX: map.repeat.x ?? 0.5,
-        centerY: map.repeat.y ?? 0.5,
+        centerX: map.center.x ?? 0.5,
+        centerY: map.center.y ?? 0.5,
         flipY: map.flipY,
         RepeatWrapping: true
     }

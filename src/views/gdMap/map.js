@@ -29,6 +29,8 @@ import {
   DstColorFactor,
   OneFactor,
 } from "three"
+
+import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js'
 import {
   Mini3d,
   ExtrudeMap,
@@ -42,7 +44,7 @@ import {
   DiffuseShader,
   Focus,
 } from "@/mini3d"
-
+import { debounce } from  "lodash-es"
 import { geoMercator } from "d3-geo"
 import worldData from "./map/worldData"
 import chinaData from "./map/chinaData"
@@ -182,28 +184,6 @@ export class World extends Mini3d {
       },
       "focusMap"
     )
-
-    tl.to(
-      this.focusMapTopMaterial,
-      {
-        duration: 1,
-        opacity: 1,
-        ease: "circ.out",
-      },
-      "focusMapOpacity"
-    )
-    tl.to(
-      this.focusMapSideMaterial,
-      {
-        duration: 1,
-        opacity: 1,
-        ease: "circ.out",
-        onComplete: () => {
-          this.focusMapSideMaterial.transparent = false
-        },
-      },
-      "focusMapOpacity"
-    )
     tl.to(
       this.mapLineMaterial,
       {
@@ -326,8 +306,6 @@ export class World extends Mini3d {
   createProvince() {
     let mapJsonData = this.assets.instance.getResource(this.mapName)
     let [topMaterial, sideMaterial] = this.createProvinceMaterial()
-    this.focusMapTopMaterial = topMaterial
-    this.focusMapSideMaterial = sideMaterial
     // 创建地图
     let map = new ExtrudeMap(this, {
       geoProjectionCenter: this.geoProjectionCenter,
@@ -340,24 +318,24 @@ export class World extends Mini3d {
       renderOrder: 9,
     })
     
-    let mapTexture = this.assets.instance.getResource("geoMapBgTexture")
+    let mapTexture = this.assets.instance.getResource("geoMapTexture")
+    mapTexture.wrapS = mapTexture.wrapT = RepeatWrapping
+    mapTexture.repeat.set(0.25,0.25)
+    mapTexture.colorSpace = SRGBColorSpace
+    // 创建地图默认与鼠标交互时的材质
     let faceMaterial = new MeshStandardMaterial({
       color: 0xffffff,
-      // map: mapTexture,
+      map: mapTexture,
       transparent: true,
-      // opacity: 0.5,
       opacity: 1,
-      // fog: false,
     })
-    let faceGradientShader = new GradientShader(faceMaterial, {
-      uColor1: 0x12bbe0,
-      uColor2: 0x0094b5,
-    })
+
     // 地图鼠标hover状态时材质
     this.defaultMaterial = faceMaterial
     this.defaultLightMaterial = this.defaultMaterial.clone()
     this.defaultLightMaterial.color = new Color("rgba(30, 233, 255, 0.41)")
-    // border: 2px solid #4EFFFF;
+    this.defaultLightMaterial.map = null
+    this.defaultLightMaterial.opacity = 1
     let mapTop = new BaseMap(this, {
       geoProjectionCenter: this.geoProjectionCenter,
       geoProjectionScale: this.geoProjectionScale,
@@ -373,21 +351,25 @@ export class World extends Mini3d {
         }
       })
     })
-    // 地图内部区域边界线
-    this.mapLineMaterial = new LineBasicMaterial({
+    this.mapLineMaterial = new LineMaterial({
       color: 0xE58D3D,
-      // opacity: 0,
-      // transparent: true,
+      linewidth: 1,
       fog: false,
     })
-    // 地图轮廓线
+    // 地图内部区域边界线
     let mapLine = new Line(this, {
       geoProjectionCenter: this.geoProjectionCenter,
       geoProjectionScale: this.geoProjectionScale,
       data: mapJsonData,
       material: this.mapLineMaterial,
       renderOrder: 3,
+      type:"Line2"
     })
+    // 地图鼠标hover状态时材质
+    this.mapLineLightMaterial = this.mapLineMaterial.clone()
+    this.mapLineLightMaterial.color = new Color("#4EFFFF")
+    this.mapLineLightMaterial.linewidth = 2
+
     mapLine.lineGroup.position.z += this.depth + 0.23
     return {
       map,
@@ -396,28 +378,31 @@ export class World extends Mini3d {
     }
   }
   createProvinceMaterial() {
+    let mapTexture = this.assets.instance.getResource("geoMapTexture")
+    mapTexture.wrapS = mapTexture.wrapT = RepeatWrapping
+    mapTexture.repeat.set(0.25,0.25)
+    mapTexture.colorSpace = SRGBColorSpace
     // lamber材质
     let topMaterial = new MeshLambertMaterial({
-      color: 0x1b5069,
+      // color: 0x1b5069,
+      map:mapTexture,
       transparent: true,
-      opacity: 0,
       fog: false,
       side: DoubleSide,
     })
-    let sideMap = this.assets.instance.getResource("side")
-    sideMap.wrapS = RepeatWrapping
-    sideMap.wrapT = RepeatWrapping
-    sideMap.repeat.set(1, 1.5)
-    // sideMap.offset.y += 0.065
+    // beijinglurLine
+    let sideMapTexture = this.assets.instance.getResource("beijinglurLine")
+    sideMapTexture.repeat.set(0, 0)
+    sideMapTexture.rotation = 3.14
+    sideMapTexture.wrapS = sideMapTexture.wrapT = RepeatWrapping
+    // sideMapTexture.matrixAutoUpdate = false
+    // sideMapTexture.needsUpdate = true
+    // initTextureGui(sideMapTexture)
     let sideMaterial = new MeshStandardMaterial({
       color: 0xffffff,
-      map: sideMap,
+      map: sideMapTexture,
       fog: false,
-      opacity: 0,
-      side: DoubleSide,
-    })
-    this.time.on("tick", () => {
-      sideMap.offset.y += 0.005
+      transparent: true,
     })
     sideMaterial.onBeforeCompile = (shader) => {
       shader.uniforms = {
@@ -425,27 +410,6 @@ export class World extends Mini3d {
         uColor1: { value: new Color(0x2a6e92) },
         uColor2: { value: new Color(0x2a6e92) },
       }
-      shader.vertexShader = shader.vertexShader.replace(
-        "void main() {",
-        `
-        attribute float alpha;
-        varying vec3 vPosition;
-        varying float vAlpha;
-        void main() {
-          vAlpha = alpha;
-          vPosition = position;
-      `
-      )
-      shader.fragmentShader = shader.fragmentShader.replace(
-        "void main() {",
-        `
-        varying vec3 vPosition;
-        varying float vAlpha;
-        uniform vec3 uColor1;
-        uniform vec3 uColor2;
-        void main() {
-      `
-      )
       shader.fragmentShader = shader.fragmentShader.replace(
         "#include <opaque_fragment>",
         /* glsl */ `
@@ -455,8 +419,7 @@ export class World extends Mini3d {
             #ifdef USE_TRANSMISSION
       diffuseColor.a *= transmissionAlpha + 0.1;
       #endif
-      vec3 gradient = mix(uColor1, uColor2, vPosition.z/1.2);
-      outgoingLight = outgoingLight*gradient;
+      outgoingLight = outgoingLight*2.5;
       gl_FragColor = vec4( outgoingLight, diffuseColor.a  );
       `
       )
@@ -516,8 +479,6 @@ export class World extends Mini3d {
     this.createFlyLine()
     // 创建飞线焦点
     this.createFocus()
-    // 创建粒子
-    // this.createParticles()
     // 创建信息点
     this.createInfoPoint()
     // 创建地图轮廓描边
@@ -562,17 +523,31 @@ export class World extends Mini3d {
   }
   createEvent() {
     let objectsHover = []
+    // 鼠标移出
     const reset = (mesh) => {
       mesh.traverse((obj) => {
         if (obj.isMesh) {
           obj.material = this.defaultMaterial
+          let lines = this.scene.getObjectsByProperty("lineName", obj.userData?.name);
+          if(lines){
+            lines.forEach(line=>{
+              line.material = this.mapLineMaterial;
+            })
+          }
         }
       })
     }
+    // 鼠标移入状态
     const move = (mesh) => {
       mesh.traverse((obj) => {
         if (obj.isMesh) {
-          obj.material = this.defaultLightMaterial
+          obj.material = this.defaultLightMaterial;
+          let lines = this.scene.getObjectsByProperty("lineName", obj.userData?.name);
+          if(lines){
+            lines.forEach(line=>{
+              line.material = this.mapLineLightMaterial;
+            })
+          }
         }
       })
     }
@@ -727,9 +702,6 @@ export class World extends Mini3d {
     texture.generateMipmaps = false
     texture.minFilter = NearestFilter
     texture.repeat.set(4, 4)
-    texture.matrixAutoUpdate = false
-    texture.needsUpdate = true
-    initTextureGui(texture)
     let material = new MeshBasicMaterial({
       map: texture,
       transparent: true,
@@ -1000,7 +972,7 @@ export class World extends Mini3d {
       material: new MeshBasicMaterial({
         color: 0x2bc4dc,
         map: texture,
-        alphaMap: texture,
+        // alphaMap: texture,
         fog: false,
         transparent: true,
         opacity: 1,

@@ -9,7 +9,7 @@ import {
   TubeGeometry,
 } from "three";
 import { Line2 } from "three/examples/jsm/lines/Line2.js";
-// import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js'
+import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js'
 import { LineGeometry } from "three/examples/jsm/lines/LineGeometry.js";
 import { transfromMapGeoJSON, getBoundBox } from "@/mini3d";
 import { geoMercator } from "d3-geo";
@@ -28,7 +28,8 @@ export class Line {
         geoProjectionScale: 120,
         position: new Vector3(0, 0, 0),
         data: "",
-        material: new LineBasicMaterial({ color: 0xffffff }),
+        // material: new LineBasicMaterial({ color: 0xffffff }),
+        material: new LineMaterial({ color: 0xffffff }),
         type: "LineLoop",
         renderOrder: 1,
         tubeRadius: 0.2,
@@ -90,49 +91,50 @@ export class Line {
     //   lineGroup.add(group);
     // }
     
-    if(type !== "Line3"){
-      for (let i = 0; i < features.length; i++) {
-        const element = features[i];
-        let group = new Group();
-        group.name = "meshLineGroup" + i;
-        if (element.properties.name === visibelProvince) {
+    for (let i = 0; i < features.length; i++) {
+      const element = features[i];
+      let { name } = element.properties;
+      let group = new Group();
+      group.name = "meshLineGroup" + i;
+
+      if(type !== "Line3"){
+        if (name === visibelProvince) {
           continue;
         }
         element.geometry.coordinates.forEach((coords) => {
           const points = [];
           let line = null;
-  
           if (type === "Line2") {
             coords[0]?.forEach((item) => {
               const [x, y] = this.geoProjection(item);
               points.push(x, -y, 0);
             });
-            line = this.createLine2(points);
+            if(points.length){
+              line = this.createLine2(points);
+              line.lineName = name
+            }
           } else if (type === "Line3") {
             coords[0]?.forEach((item) => {
               const [x, y] = this.geoProjection(item);
               points.push(new Vector3(x, -y, 0));
             });
-            line = this.createLine3(points);
+            if(points.length){
+              line = this.createLine3(points);
+              line.lineName = name
+            }
           } else {
             coords[0]?.forEach((item) => {
               const [x, y] = this.geoProjection(item);
               points.push(new Vector3(x, -y, 0));
               line = this.createLine(points);
+              line.lineName = name
             });
           }
           // 将线条插入到组中
           if(line) group.add(line);
         });
-        lineGroup.add(group);
-      }
-    }else{
-      // 获取地图外轮廓坐标集合，用来生成地图外轮廓动画
-      for (let i = 0; i < features.length; i++) {
-        const element = features[i];
-        let group = new Group();
-        group.name = "meshLineGroup" + i;
-        if (element.properties.name === currentGeoName) {
+      }else{
+        if (name === currentGeoName) {
           element.geometry.coordinates.forEach((coords) => {
             const points = [];
             coords[0]?.forEach((item) => {
@@ -147,8 +149,9 @@ export class Line {
           });
           break;
         }
-        lineGroup.add(group);
       }
+
+      lineGroup.add(group);
     }
     return lineGroup;
   }
@@ -184,7 +187,7 @@ export class Line {
     return line;
   }
   createLine(points) {
-    const { material, renderOrder, type } = this.config;
+    const { material, renderOrder } = this.config;
     const geometry = new BufferGeometry();
     geometry.setFromPoints(points);
     let line = new LineLoop(geometry, material);

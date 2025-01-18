@@ -39,7 +39,7 @@ const items = ref([
       .icon{
         width: 40px;
         height: 40px;
-        background-repreat:no-repeat;
+        background-repeat:no-repeat;
         background-position:center;
         background-size:contain;
       }

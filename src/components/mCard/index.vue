@@ -181,6 +181,8 @@ onMounted(() => {
 <style lang="scss">
 .m-card {
   position: relative;
+  // background: rgba(26, 26, 26, 0.36);
+  backdrop-filter: blur(31px);
   &-hd {
     position: absolute;
     left: 0;

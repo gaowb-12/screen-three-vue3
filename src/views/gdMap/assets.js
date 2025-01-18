@@ -30,7 +30,6 @@ import beijinglurLine from "@/assets/texture/maps/geoBeijingMapBgTexture.png"
 import geoMapBgTexture from "@/assets/texture/maps/geoWorldMapBgTexture.png"
 import geoMapTexture from "@/assets/texture/maps/geoMapTexture.png"
 
-
 export class Assets {
   constructor() {
     this.init()
@@ -88,6 +87,7 @@ export class Assets {
       { type: "Texture", name: "focusMoveBg", path: focusMoveBgTexture },
       { type: "Texture", name: "geoMapBgTexture", path: geoMapBgTexture },
       { type: "Texture", name: "geoMapTexture", path: geoMapTexture },
+      { type: "Texture", name: "beijinglurLine", path: beijinglurLine },
     ]
     // 资源加载
     this.instance.loadAll(assets)
