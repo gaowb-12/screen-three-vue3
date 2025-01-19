@@ -513,23 +513,24 @@ export class World extends Mini3d {
     }
     return [topMaterial, sideMaterial]
   }
+  
   // 移除所有子节点
   removeAllChildren(parent) {
     while (parent.children.length > 0) {
-        const child = parent.children[0];
-        parent.remove(child);
-        // 可选：如果你想彻底删除对象，可以调用dispose()方法
-        // 对于几何体(Geometry)、材质(Material)和纹理(Texture)等对象
-        if (child.geometry) child.geometry.dispose();
-        if (child.material) {
-            if (child.material.isMaterial) {
-                this.cleanMaterial(child.material);
-            } else {
-                // 多材质合集
-                for (const m of child.material) this.cleanMaterial(m);
-            }
-        }
-        if (child.texture) child.texture.dispose();
+      const child = parent.children[0];
+      parent.remove(child);
+      // 可选：如果你想彻底删除对象，可以调用dispose()方法
+      // 对于几何体(Geometry)、材质(Material)和纹理(Texture)等对象
+      if (child.geometry) child.geometry.dispose();
+      if (child.material) {
+          if (child.material.isMaterial) {
+              this.cleanMaterial(child.material);
+          } else {
+              // 多材质合集
+              for (const m of child.material) this.cleanMaterial(m);
+          }
+      }
+      if (child.texture) child.texture.dispose();
     }
   }
   // 清理内存
@@ -549,11 +550,12 @@ export class World extends Mini3d {
     focusMapGroup.name = this.mapName
     this.focusMapGroup = focusMapGroup
     // 焦点地图
-    let { map, mapTop, mapLine } = this.createProvince()
+    let { map, mapTop, mapLine, mapBottomeLine } = this.createProvince()
     // 创建扩散
     map.setParent(focusMapGroup)
     mapTop.setParent(focusMapGroup)
     mapLine.setParent(focusMapGroup)
+    mapBottomeLine.setParent(focusMapGroup)
     focusMapGroup.position.set(0, 0, -0.01)
     focusMapGroup.scale.set(0, 0, 0)
     mapGroup.add(focusMapGroup)
@@ -579,9 +581,11 @@ export class World extends Mini3d {
         sprite.removeEventListener(item.name, item.fn)
       })
     })
+    
     // 移出网格事件
     this.eventHandler.forEach((items, mesh)=>{
       items.forEach(item=>{
+        console.log(item.name, mesh)
         mesh.removeEventListener(item.name, item.fn)
       })
     })
@@ -593,6 +597,7 @@ export class World extends Mini3d {
     this.eventElement = [];
   }
   removeAllbar(){
+    this.removeAllChildren(this.mapGroupContainer);
     this.removeAllChildren(this.flyLineFocusGroup)
     this.removeAllChildren(this.labelGroup)
     this.removeAllChildren(this.InfoPointGroup)
@@ -605,8 +610,8 @@ export class World extends Mini3d {
     if(this.mapName === itemMapInfo.userData?.name.toLocaleLowerCase()) return;
     let names = ['China','北京市','朝阳区'];
     if( names.includes(itemMapInfo.userData.name)){
-      this.removeAllChildren(this.mapGroupContainer);
       this.removeAllbar()
+      this.removeRelatedEvent()
       this.scene.background = this.assets.instance.getResource("geoMapBgTexture")
       if(itemMapInfo.userData.name == 'China'){
         // 点击中国
@@ -622,7 +627,7 @@ export class World extends Mini3d {
 
       this.geoProjectionCenter = mapInfo[this.mapName].centerCoordinates
       this.geoProjectionScale = mapInfo[this.mapName].scale
-      
+
       this.toggleMap()
     }
   }

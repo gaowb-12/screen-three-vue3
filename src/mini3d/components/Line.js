@@ -135,7 +135,6 @@ export class Line {
         });
       }else{
         if (name === currentGeoName) {
-          console.log(element)
           element.geometry.coordinates.forEach((coords) => {
             const points = [];
             coords[0]?.forEach((item) => {
@@ -143,7 +142,7 @@ export class Line {
               // points.push(new Vector3(x, -y, 0));
               points.push(x, -y, 0);
             });
-            console.log("------所有的外轮廓坐标------",name,currentGeoName,points)
+            // console.log("------所有的外轮廓坐标------",name,currentGeoName,points)
             if(points.length){
               let line = this.createLine2(points);
               group.add(line);
