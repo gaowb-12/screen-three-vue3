@@ -1149,24 +1149,34 @@ export class World extends Mini3d {
     const texture = this.assets.instance.getResource("pathLine3")
     texture.wrapS = texture.wrapT = RepeatWrapping
     texture.repeat.set(2, 1)
-
+    let lineMaterial = new LineMaterial( {
+      // color: 0xFFCC7E,
+      color: 0xE58D3D,
+      linewidth: 6, 
+      dashed: true,
+      dashScale: 10,
+      dashSize: 1,
+      gapSize: 1,
+    });
+    lineMaterial.colorSpace = SRGBColorSpace
     let pathLine = new Line(this, {
       geoProjectionCenter: this.geoProjectionCenter,
       geoProjectionScale: this.geoProjectionScale,
       position: new Vector3(0, 0, this.depth + 0.24),
       data: mapJsonData,
-      material: new MeshBasicMaterial({
-        color: 0xE58D3D,
-        map: texture,
-        // alphaMap: texture,
-        transparent: true,
-        opacity: 1,
-        // blending: AdditiveBlending,
-      }),
+      // material: new MeshBasicMaterial({
+      //   color: 0xE58D3D,
+      //   map: texture,
+      //   // alphaMap: texture,
+      //   transparent: true,
+      //   opacity: 1,
+      //   // blending: AdditiveBlending,
+      // }),
+      material: lineMaterial,
       // 当前的
       currentGeoName: mapInfo[this.mapName].geoName,
-      type: "Line3",
-      renderOrder: 22,
+      type: "outLine2",
+      renderOrder: 24,
       tubeRadius: 0.03,
     })
     // 设置父级

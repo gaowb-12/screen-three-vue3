@@ -97,7 +97,7 @@ export class Line {
       let group = new Group();
       group.name = "meshLineGroup" + i;
 
-      if(type !== "Line3"){
+      if(type !== "outLine2"){
         if (name === visibelProvince) {
           continue;
         }
@@ -135,15 +135,17 @@ export class Line {
         });
       }else{
         if (name === currentGeoName) {
+          console.log(element)
           element.geometry.coordinates.forEach((coords) => {
             const points = [];
             coords[0]?.forEach((item) => {
               const [x, y] = this.geoProjection(item);
-              points.push(new Vector3(x, -y, 0));
+              // points.push(new Vector3(x, -y, 0));
+              points.push(x, -y, 0);
             });
             console.log("------所有的外轮廓坐标------",name,currentGeoName,points)
             if(points.length){
-              let line = this.createLine3(points);
+              let line = this.createLine2(points);
               group.add(line);
             }
           });
