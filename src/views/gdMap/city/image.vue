@@ -86,7 +86,7 @@ const initData = [
         "toName": "英国",
         transmissionNum: 24523,
         sensitiveNum: 14847,
-        path: getBezierPath([260, -120], [-100, -50]),
+        path: getBezierPath([260, -105], [-100, -50]),
         dir: [0, 1]
     },
     {
@@ -95,7 +95,7 @@ const initData = [
         "toName": "法国",
         transmissionNum: 11483,
         sensitiveNum: 11483,
-        path: getBezierPath([550, -90], [500, 250]),
+        path: getBezierPath([550, -75], [500, 250]),
         dir: [0, 1]
     },
     {
@@ -103,7 +103,7 @@ const initData = [
         "toName": "韩国",
         transmissionNum: 800,
         sensitiveNum: 800,
-        path: getBezierPath([390, -130], [900, 40]),
+        path: getBezierPath([390, -100], [900, 40]),
         dir: [0, 1]
     },
     {
@@ -111,7 +111,7 @@ const initData = [
         "toName": "美国、新加坡、中国香港、泰国、俄罗斯、开曼群岛（英属）、英国",
         transmissionNum: 472524,
         sensitiveNum: 0,
-        path: getBezierPath([290, -60], [0, -50]),
+        path: getBezierPath([290, -45], [0, -50]),
         dir: [0, 1]
     },
     {
@@ -120,7 +120,7 @@ const initData = [
         "toName": "新加坡",
         transmissionNum: 0,
         sensitiveNum: 12596,
-        path: getBezierPath([390, 30], [100, 200]),
+        path: getBezierPath([390, 40], [100, 200]),
         dir: [0, 1]
     },
     {
@@ -128,7 +128,7 @@ const initData = [
         "toName": "中国澳门",
         transmissionNum: 1000,
         sensitiveNum: 0,
-        path: getBezierPath([660, -90], [750, 100]),
+        path: getBezierPath([660, -75], [750, 100]),
         dir: [0, 1]
     },
     {
@@ -136,7 +136,7 @@ const initData = [
         "toName": "澳大利亚",
         transmissionNum: 97198,
         sensitiveNum: 19031,
-        path: getBezierPath([210, -30], [0, 40]),
+        path: getBezierPath([210, -15], [0, 40]),
         dir: [0, 1]
     },
     
