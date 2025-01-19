@@ -50,8 +50,9 @@
 
 <script setup lang="ts">
 import GoupPath from "./path.vue"
-import { inject, ref } from "vue"
+import { inject, onMounted, ref } from "vue"
 import { debounce } from "lodash-es"
+import gsap from "gsap";
 
 const infoTip = ref()
 const width = ref(721)
@@ -226,6 +227,15 @@ const mouseLeavePath = debounce((e) => {
     }
     infoTip.value.style.display = "none"
 }, 300)
+
+onMounted(()=>{
+    gsap.to(".container", {
+        scale: 1,
+        duration: 1,
+        ease: "circ.out"
+    });
+})
+
 </script>
 
 <style scoped lang="scss">
@@ -233,6 +243,7 @@ const mouseLeavePath = debounce((e) => {
     width: 100%;
     height: 100%;
     position: relative;
+    transform: scale(0, 0);
     .city-image {
         width: 100%;
         // height: 100%;

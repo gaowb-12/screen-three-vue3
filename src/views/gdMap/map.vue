@@ -9,7 +9,7 @@ import { World } from "./map.js";
 import emitter from "@/utils/emitter";
 const canvasMap = shallowRef(null);
 
-const changeIsCity = inject("changeIsCity")
+const goCity = inject("goCity")
 onMounted(() => {
   emitter.$on("loadMap", loadMap);
 });
@@ -19,10 +19,13 @@ onBeforeUnmount(() => {
 });
 function loadMap(assets) {
   let options = {
-    changeIsCity
+    goCity
   }
   canvasMap.value = new World(document.getElementById("canvasMap"), assets, options);
   canvasMap.value.time.pause();
+}
+function backWorld(){
+  canvasMap.value.backWorld()
 }
 async function play() {
   canvasMap.value.time.resume();
@@ -33,6 +36,7 @@ defineExpose({
   loadMap,
   play,
   canvasMap,
+  backWorld
 });
 </script>
 

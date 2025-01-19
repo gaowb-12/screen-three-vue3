@@ -79,7 +79,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { shallowRef, ref, reactive, onMounted, onBeforeUnmount, defineAsyncComponent, provide  } from "vue"
+import { shallowRef, ref, reactive, onMounted, onBeforeUnmount, defineAsyncComponent, provide, nextTick  } from "vue"
 import mapScene from "./map.vue"
 import mHeader from "@/components/mHeader/index.vue"
 import mSvglineAnimation from "@/components/mSvglineAnimation/index.vue"
@@ -132,12 +132,14 @@ const state = reactive({
   ],
 })
 function changeIsCity(data){
-  console.log(data)
-  isCity.value = !isCity.value
-  if(!isCity.value){
-    isClickCityPath.value = false
-  }
+  isCity.value = false
+  isClickCityPath.value = false
+  mapSceneRef.value.backWorld()
 }
+function goCity(){
+  isCity.value = true
+}
+provide('goCity', goCity)
 provide('changeIsCity', changeIsCity)
 
 const flowImages = ref({

@@ -57,10 +57,6 @@ import emitter from "@/utils/emitter"
 import { InteractionManager } from "three.interactive"
 import mapInfo from "./map/enumInfo"
 import {initTextureGui} from "@/hooks/cityModels/gui"
-import{createFlyingLines} from "@/hooks/cityModels/FlyLine"
-
-import {  MeshLineMaterial } from 'three.meshline';
-
 export class World extends Mini3d {
   constructor(canvas, assets, options) {
     super(canvas)
@@ -261,13 +257,14 @@ export class World extends Mini3d {
   }
 
   initToggleAnimate(){
+    let duration = 1.5
     let tl = gsap.timeline({
       onComplete: () => {},
     })
     tl.to(
       this.focusMapGroup.position,
       {
-        duration: 1,
+        duration,
         x: 0,
         y: 0,
         z: 0,
@@ -277,7 +274,7 @@ export class World extends Mini3d {
     tl.to(
       this.focusMapGroup.scale,
       {
-        duration: 1,
+        duration,
         x: 1,
         y: 1,
         z: 1,
@@ -293,7 +290,7 @@ export class World extends Mini3d {
       tl.to(
         item.children[0].scale,
         {
-          duration: 1,
+          duration,
           delay: 0.1 * index,
           x: 1,
           y: 1,
@@ -305,7 +302,7 @@ export class World extends Mini3d {
       tl.to(
         item.children[1].scale,
         {
-          duration: 1,
+          duration,
           delay: 0.1 * index,
           x: 1,
           y: 1,
@@ -558,7 +555,7 @@ export class World extends Mini3d {
     mapTop.setParent(focusMapGroup)
     mapLine.setParent(focusMapGroup)
     focusMapGroup.position.set(0, 0, -0.01)
-    focusMapGroup.scale.set(1, 1, 1)
+    focusMapGroup.scale.set(0, 0, 0)
     mapGroup.add(focusMapGroup)
     mapGroup.rotation.x = -Math.PI / 2
     mapGroup.position.set(0, 0.5, 0)
@@ -619,14 +616,21 @@ export class World extends Mini3d {
         this.scene.background = this.assets.instance.getResource("beijinglurLine")
         this.mapName = "beijing"
       }else if(itemMapInfo.userData.name == '朝阳区'){
-        this.options.changeIsCity&&this.options.changeIsCity(itemMapInfo)
+        this.options.goCity&&this.options.goCity(itemMapInfo);
+        return;
       }
-      
+
       this.geoProjectionCenter = mapInfo[this.mapName].centerCoordinates
       this.geoProjectionScale = mapInfo[this.mapName].scale
-  
+      
       this.toggleMap()
     }
+  }
+  backWorld(){
+    this.mapName = "world"
+    this.geoProjectionCenter = mapInfo[this.mapName].centerCoordinates
+    this.geoProjectionScale = mapInfo[this.mapName].scale
+    this.toggleMap()
   }
   createEvent() {
     let objectsHover = []
