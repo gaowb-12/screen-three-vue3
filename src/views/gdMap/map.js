@@ -58,7 +58,7 @@ import {initTextureGui} from "@/hooks/cityModels/gui"
 export class World extends Mini3d {
   constructor(canvas, assets, options) {
     super(canvas)
-    this.mapName="beijing"
+    this.mapName="world"
     this.mapData = {
       world: worldData,
       china: chinaData,
@@ -108,8 +108,11 @@ export class World extends Mini3d {
     this.flyLineFocusGroup.visible = false
     this.flyLineFocusGroup.rotation.x = -Math.PI / 2
     this.scene.add(this.flyLineFocusGroup)
+    this.allGuangquan = []
+    this.InfoPointGroup = new Group
     // 区域事件元素
     this.eventElement = []
+    this.infoLabelElement = []
     // 鼠标移上移除的材质
     this.defaultMaterial = null // 默认材质
     this.defaultLightMaterial = null // 高亮材质
@@ -534,9 +537,9 @@ export class World extends Mini3d {
     this.mapGroupContainer.add(mapGroup)
     this.createEvent()
     // 创建飞线
-    this.createFlyLine()
+    // this.createFlyLine()
     // 创建飞线焦点
-    this.createFocus()
+    // this.createFocus()
     // 创建信息点
     this.createInfoPoint()
     // 创建地图轮廓描边
@@ -573,6 +576,7 @@ export class World extends Mini3d {
   }
   // 下钻
   downDrill(itemMapInfo){
+    if(this.mapName === itemMapInfo.userData?.name.toLocaleLowerCase()) return;
     let names = ['China','北京市','朝阳区'];
     if( names.includes(itemMapInfo.userData.name)){
       this.removeAllChildren(this.mapGroupContainer);
@@ -858,8 +862,6 @@ export class World extends Mini3d {
     const tubeSegments = 32
     const tubeRadialSegments = 2
     const closed = false
-    let [centerX, centerY] = this.geoProjection(this.flyLineCenter)
-    let centerPoint = new Vector3(centerX, -centerY, 0)
     const material = new MeshBasicMaterial({
       map: texture,
       // alphaMap: texture,
@@ -874,9 +876,12 @@ export class World extends Mini3d {
       texture.offset.x -= 0.006
     })
     
-    let data = (this.mapData[this.mapName] || provincesData).filter((item, index) => index < 7)
+    let data = (this.mapData[this.mapName] || provincesData)
     data
       .map((city) => {
+        let [centerX, centerY] = this.geoProjection(city.fromCenter)
+        let centerPoint = new Vector3(centerX, -centerY, 0)
+
         let [x, y] = this.geoProjection(city.center)
         let point = new Vector3(x, -y, 0)
         const center = new Vector3()
@@ -926,6 +931,11 @@ export class World extends Mini3d {
     this.particles.enable = true
     this.particleGroup.visible = true
   }
+  
+  // 千分位加逗号
+  formatNumber(num) {
+    return String(num).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  }
   // 创建地图标记，以及提示信息
   createInfoPoint() {
     let self = this
@@ -940,7 +950,7 @@ export class World extends Mini3d {
     const texture = this.assets.instance.getResource("point")
     const activeTexture = this.assets.instance.getResource("pointActive")
     let colors = [0xfffef4, 0x77fbf5]
-    let infodata = (this.mapData[this.mapName] || provincesData).filter((item, index) => index < 7)
+    let infodata = (this.mapData[this.mapName] || provincesData)
     this.spriteEventHandler = new Map();
 
     infodata.map((data, index) => {
@@ -971,7 +981,10 @@ export class World extends Mini3d {
         position: [x, -y, this.depth + 0.7],
         name: data.name,
         value: data.value,
-        level: data.enName,
+        fromName: data.fromName,
+        toName: data.toName,
+        transmissionNum: this.formatNumber(data.transmissionNum),
+        sensitiveNum: this.formatNumber(data.transmissionNum),
         index: index,
       }
       this.InfoPointGroup.add(sprite)
@@ -1013,26 +1026,42 @@ export class World extends Mini3d {
     function infoLabel(data, label3d, labelGroup) {
       let label = label3d.create("", "info-point", true)
       const [x, y] = self.geoProjection(data.center)
-      label.init(
-        ` <div class="info-point-wrap">
-            <div class="info-point-label">
-              <div class="province"><span class="icon"></span>${data.name}<span class="arrow">>></span></div>
-              <div class="other">${data.name}</div>
-            </div>
-            <div class="info-point-content">
-              <div class="content-item">
-                <div class="label">传输数据量</div>
-                <div class="value">${data.value}</div>
-              </div>
-              <div class="content-item">
-                <div class="label">敏感数据量</div>
-                <div class="value">${data.value}</div>
+      if(self.mapName == "world"){
+        label.init(
+          ` <div class="info-point-wrap">
+              <div class="info-point-label">
+                <div class="province">${data.fromName}<span class="arrow">>></span></div>
+                <div class="other" >${data.toName}</div>
               </div>
             </div>
-          </div>
-      `,
-        new Vector3(x, -y, self.depth + 1.9)
-      )
+        `,
+          new Vector3(x, -y, self.depth + 1.9)
+        )
+      }else{
+        label.init(
+          ` <div class="info-point-wrap">
+              <div class="info-point-label" style="justify-content: flex-start;">
+                <div class="province"><span class="icon"></span>${data.name}</div>
+              </div>
+              <div class="info-point-label">
+                <div class="province">${data.fromName}<span class="arrow">>></span></div>
+                <div class="other" >${data.toName}</div>
+              </div>
+              <div class="info-point-content">
+                <div class="content-item">
+                  <div class="label">传输数据量</div>
+                  <div class="value">${self.formatNumber(data.transmissionNum)}</div>
+                </div>
+                <div class="content-item">
+                  <div class="label">敏感数据量</div>
+                  <div class="value">${self.formatNumber(data.transmissionNum)}</div>
+                </div>
+              </div>
+            </div>
+        `,
+          new Vector3(x, -y, self.depth + 1.9)
+        )
+      }
       label3d.setLabelStyle(label, 0.015, "x")
       label.setParent(labelGroup)
       label.visible = false

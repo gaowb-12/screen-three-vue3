@@ -80,9 +80,12 @@ defineExpose({
       }
       .other {
         font-family: Open Sans;
-        font-size: 10px;
+        font-size: 12px;
         color: #ffffff;
         max-width: 60px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
     }
     &-content {
