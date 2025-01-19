@@ -9,7 +9,7 @@
         <div class="pie-legend">
           <div class="pie-legend-item" v-for="(item, index) in state.pieData" :key="index">
             <div class="icon" :style="{ background: state.pieDataColor[index] }"></div>
-            <div class="name">{{ item.name }}</div>
+            <div class="name" :title="item.name">{{ item.name }}</div>
             <!-- <div class="value">{{ item.value }}<span class="unit">%</span></div> -->
           </div>
         </div>
@@ -43,22 +43,20 @@ const state = reactive<State>({
   selected: {"0": true},
   pieDataColor: colors,
   pieData: [
-    {
-      name: "类型1",
-      value: 40,
-    },
-    {
-      name: "类型2",
-      value: 25,
-    },
-    {
-      name: "类型3",
-      value: 20,
-    },
-    {
-      name: "类型4",
-      value: 15,
-    },
+    {name:"	金融机构	", value:	1	 },
+    {name:"	金融科技	", value:	1	 },
+    {name:"	科技推广和应用服务业	", value:	1	 },
+    {name:"	汽车行业	", value:	1	 },
+    {name:"	人工智能	", value:	1	 },
+    {name:"	商务服务业	", value:	2	 },
+    {name:"	生物技术推广服务行业	", value:	1	 },
+    {name:"	数字科技行业	", value:	1	 },
+    {name:"	所属行业	", value:	1	 },
+    {name:"	投资与资产管理	", value:	1	 },
+    {name:"	医疗卫生	", value:	1	 },
+    {name:"	医药行业	", value:	1	 },
+    {name:"	医药制造业	", value:	1	 },
+    {name:"	租赁和商务服务	", value:	1	 },
   ],
 })
 const option = ref({
@@ -175,6 +173,7 @@ onMounted(()=>{
         font-weight: 500;
         font-size: 12px;
         color: #ffffff;
+        max-width: 64px;
       }
       .value {
         display: flex;

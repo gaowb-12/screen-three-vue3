@@ -15,11 +15,11 @@
 import { ref, onMounted, nextTick, onBeforeUnmount } from "vue"
 import mCard from "@/components/mCard/index.vue"
 
-const items = ref([
-  {value:10, name:"数据传输国家数"},
-  {value:20, name:"数据传输国家数1"},
-  {value:30, name:"数据传输国家数2"},
-  {value:40, name:"数据传输国家数3"},
+const items = ref( [
+  {name:"数据传输国家数", value: 26},
+  {name:"境外第三方数量", value: 1358},
+  {name:"出境企业数", value: 14},
+  {name:"出境场景数", value: 31}
 ])
 </script>
 <style lang="scss" scoped>

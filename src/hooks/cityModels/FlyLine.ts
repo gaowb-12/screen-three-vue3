@@ -8,6 +8,7 @@ interface FlyOptions {
     uColor: Color; // 飞线颜色
     uBgColor: Color; // 背景颜色
     uDuration: number; // 动画执行周期
+    material?: any
 }
 const flyOptionsDefault: FlyOptions = {
     uColor: new Color(0xFFCC7E),
@@ -41,6 +42,7 @@ export const createFlyingLines = (
         //设置线段需要的材质
         let material = new MeshLineMaterial({
             color: new Color(0xFFCC7E),
+            material: flyOptions.material || null,
             lineWidth: 1,
             //dashArray和dashRatio都是构成虚线的影响因素
             dashArray: 0.005,
@@ -82,7 +84,7 @@ export const createFlyingLines = (
         mesh.name="飞线"
         mesh.raycast = MeshLineRaycast
         
-        lines.push(mesh, flyMesh )
+        lines.push(mesh )
     }
     
     return lines

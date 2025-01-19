@@ -18,10 +18,16 @@
 import { ref, onMounted,onBeforeUnmount, nextTick } from "vue"
 import mCard from "@/components/mCard/index.vue"
 let items = ref([
-  {value:60, name:"中国"},
-  {value:20, name:"美国"},
-  {value:30, name:"澳大利亚"},
-  {value:40, name:"韩国"},
+  {name:"中国澳门", value:	8	 },
+  {name:"泰国	", value:	7	 },
+  {name:"中国香港	", value:	7	 },
+  {name:"马来西亚	", value:	1	 },
+  {name:"荷兰	", value:	5	 },
+  {name:"新加坡	", value:	31	 },
+  {name:"美国	", value:	11	 },
+  {name:"日本	", value:	3	 },
+  {name:"韩国	", value:	2	 },
+  {name:"英国	", value:	2	 },
 ])
 let max = ref(Infinity);
 
@@ -45,7 +51,7 @@ function getRate(value){
     .item{
       display:flex;
       align-items: center;
-      padding:5px 10px;
+      padding:10px;
       .name{
         font-family: "Alibaba", "PuHuiTi", 3.0;
         font-size: 14px;

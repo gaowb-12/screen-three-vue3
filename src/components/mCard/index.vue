@@ -182,7 +182,6 @@ onMounted(() => {
 .m-card {
   position: relative;
   // background: rgba(26, 26, 26, 0.36);
-  backdrop-filter: blur(31px);
   &-hd {
     position: absolute;
     left: 0;
@@ -322,6 +321,7 @@ onMounted(() => {
       margin-top: -35px;
     }
     &-content {
+      backdrop-filter: blur(31px);
       position: absolute;
       left: 0;
       top: 36px;

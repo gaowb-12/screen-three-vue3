@@ -189,8 +189,8 @@ body {
       left: 32px;
       top: auto;
       bottom: 20px;
-      backdrop-filter: blur(31px);
       img{
+        backdrop-filter: blur(31px);
         width:100%;
         height: calc(100% - 36px);
         position: absolute;

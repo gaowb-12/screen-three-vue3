@@ -62,7 +62,7 @@ export class World extends Mini3d {
     this.mapData = {
       world: worldData,
       china: chinaData,
-      province: provincesData
+      beijing: provincesData
     }
     this.options = options
     // 中心坐标
@@ -70,11 +70,11 @@ export class World extends Mini3d {
     // 缩放比例
     this.geoProjectionScale = mapInfo[this.mapName].scale
     // 飞线中心
-    this.flyLineCenter = [113.544372, 23.329249]
+    this.flyLineCenter = [116.005285, 39.904989]
     // 地图拉伸高度
     this.depth = 0.5
     // 是否点击
-    this.clicked = false
+    this.clicked = true
     // 雾
     this.scene.fog = new Fog(0x102736, 1, 50)
     // 背景
@@ -82,7 +82,8 @@ export class World extends Mini3d {
     this.assets = assets
 
     this.scene.background = this.assets.instance.getResource("geoMapBgTexture")
-    
+    this.mapGroupContainer = new Group()
+    this.scene.add(this.mapGroupContainer)
     // 相机初始位置
     this.camera.instance.position.set(-13.767695123014105, 220.990152163077308, 39.28228164159694)
     this.camera.instance.near = 0.1
@@ -150,8 +151,8 @@ export class World extends Mini3d {
     tl.to(this.camera.instance.position, {
       duration: 2,
       x: -0.17427287762525134,
-      y: 13.678992786206543,
-      z: 20.688611202093714,
+      y: 17.678992786206543,
+      z: 17.688611202093714,
       ease: "circ.out",
       onStart: () => {
         this.flyLineFocusGroup.visible = false
@@ -179,7 +180,7 @@ export class World extends Mini3d {
         onComplete: () => {
           this.flyLineGroup.visible = true
           this.InfoPointGroup.visible = true
-          // this.createInfoPointLabelLoop()
+          this.createInfoPointLabelLoop()
         },
       },
       "focusMap"
@@ -250,6 +251,63 @@ export class World extends Mini3d {
     })
   }
 
+  initToggleAnimate(){
+    let tl = gsap.timeline({
+      onComplete: () => {},
+    })
+    tl.to(
+      this.focusMapGroup.position,
+      {
+        duration: 1,
+        x: 0,
+        y: 0,
+        z: 0,
+      }
+    )
+
+    tl.to(
+      this.focusMapGroup.scale,
+      {
+        duration: 1,
+        x: 1,
+        y: 1,
+        z: 1,
+        ease: "circ.out",
+        onComplete: () => {
+          this.flyLineGroup.visible = true
+          this.InfoPointGroup.visible = true
+          this.createInfoPointLabelLoop()
+        },
+      }
+    )
+    this.allGuangquan.map((item, index) => {
+      tl.to(
+        item.children[0].scale,
+        {
+          duration: 1,
+          delay: 0.1 * index,
+          x: 1,
+          y: 1,
+          z: 1,
+          ease: "circ.out",
+        },
+        "bar"
+      )
+      tl.to(
+        item.children[1].scale,
+        {
+          duration: 1,
+          delay: 0.1 * index,
+          x: 1,
+          y: 1,
+          z: 1,
+          ease: "circ.out",
+        },
+        "bar"
+      )
+    })
+  }
+
   initEnvironment() {
     let sun = new AmbientLight(0xffffff, 5)
     this.scene.add(sun)
@@ -287,7 +345,6 @@ export class World extends Mini3d {
     let focusMapGroup = new Group()
     focusMapGroup.name = this.mapName
     this.focusMapGroup = focusMapGroup
-    this.mapGroupContainer = mapGroup
     // 背景地图
     // 焦点地图
     let { map, mapTop, mapLine } = this.createProvince()
@@ -301,7 +358,8 @@ export class World extends Mini3d {
     mapGroup.add(focusMapGroup)
     mapGroup.rotation.x = -Math.PI / 2
     mapGroup.position.set(0, 0.2, 0)
-    this.scene.add(mapGroup)
+    // this.scene.add(mapGroup)
+    this.mapGroupContainer.add(mapGroup)
   }
   createProvince() {
     let mapJsonData = this.assets.instance.getResource(this.mapName)
@@ -461,7 +519,6 @@ export class World extends Mini3d {
     let focusMapGroup = new Group()
     focusMapGroup.name = this.mapName
     this.focusMapGroup = focusMapGroup
-    this.mapGroupContainer = mapGroup
     // 焦点地图
     let { map, mapTop, mapLine } = this.createProvince()
     // 创建扩散
@@ -473,7 +530,8 @@ export class World extends Mini3d {
     mapGroup.add(focusMapGroup)
     mapGroup.rotation.x = -Math.PI / 2
     mapGroup.position.set(0, 0.5, 0)
-    this.scene.add(mapGroup)
+    // this.scene.add(mapGroup)
+    this.mapGroupContainer.add(mapGroup)
     this.createEvent()
     // 创建飞线
     this.createFlyLine()
@@ -483,8 +541,24 @@ export class World extends Mini3d {
     this.createInfoPoint()
     // 创建地图轮廓描边
     this.createStorke()
+    this.initToggleAnimate()
   }
   removeRelatedEvent(){
+    // 移出精灵图事件
+    this.spriteEventHandler.forEach((item, sprite)=>{
+      sprite.forEach(item=>{
+        sprite.removeEventListener(item.name, item.fn)
+      })
+    })
+    // 移出网格事件
+    this.eventHandler.forEach((items, mesh)=>{
+      items.forEach(item=>{
+        mesh.removeEventListener(item.name, item.fn)
+      })
+    })
+    this.eventElement.forEach(mesh => {
+      this.interactionManager.remove(mesh)
+    });
     this.interactionManager.dispose();
     this.interactionManager = new InteractionManager(this.renderer.instance, this.camera.instance, this.canvas)
     this.eventElement = [];
@@ -493,9 +567,8 @@ export class World extends Mini3d {
     this.removeAllChildren(this.flyLineFocusGroup)
     this.removeAllChildren(this.labelGroup)
     this.removeAllChildren(this.InfoPointGroup)
-    this.quanGroup.parent.remove(this.quanGroup)
-    this.flyLineGroup.parent.remove(this.flyLineGroup)
-    this.removeInfoPoint()
+    this.removeAllChildren(this.mapGroupContainer)
+    this.infoLabelElement = []
     this.allGuangquan = []
   }
   // 下钻
@@ -504,11 +577,13 @@ export class World extends Mini3d {
     if( names.includes(itemMapInfo.userData.name)){
       this.removeAllChildren(this.mapGroupContainer);
       this.removeAllbar()
+      this.scene.background = this.assets.instance.getResource("geoMapBgTexture")
       if(itemMapInfo.userData.name == 'China'){
         // 点击中国
         this.mapName = "china"
       }else if(itemMapInfo.userData.name == '北京市'){
         // 点击广东
+        this.scene.background = this.assets.instance.getResource("beijinglurLine")
         this.mapName = "beijing"
       }else if(itemMapInfo.userData.name == '朝阳区'){
         this.options.changeIsCity&&this.options.changeIsCity(itemMapInfo)
@@ -550,27 +625,41 @@ export class World extends Mini3d {
         }
       })
     }
+    this.eventHandler = new Map();
     this.eventElement.map((mesh) => {
-      this.interactionManager.add(mesh)
-      mesh.addEventListener("mousedown", (ev) => {
-        console.log('---点击地图---',ev.target)
+      this.interactionManager.add(mesh);
+      let mouseArrs = [];
+      
+      let mouseDownFn = (ev) => {
+        this.camera.instance.updateProjectionMatrix()
+        console.log('---点击地图---',ev.target, this.camera.instance)
         this.downDrill(ev.target)
-      })
-      mesh.addEventListener("mouseover", (event) => {
+      }
+      mouseArrs.push({eventName:"mousedown", fn: mouseDownFn})
+      mesh.addEventListener("mousedown", mouseDownFn);
+
+      let mouseOverFn = (event) => {
         if (!objectsHover.includes(event.target.parent)) {
           objectsHover.push(event.target.parent)
         }
         document.body.style.cursor = "pointer"
         move(event.target.parent)
-      })
-      mesh.addEventListener("mouseout", (event) => {
+      }
+      mouseArrs.push({eventName:"mouseover", fn: mouseOverFn})
+      mesh.addEventListener("mouseover", mouseOverFn)
+
+      let mouseOutFn = (event) => {
         objectsHover = objectsHover.filter((n) => n.userData.name !== event.target.parent.userData.name)
         if (objectsHover.length > 0) {
           const mesh = objectsHover[objectsHover.length - 1]
         }
         reset(event.target.parent)
         document.body.style.cursor = "default"
-      })
+      }
+      mouseArrs.push({eventName:"mouseout", fn: mouseOutFn})
+      mesh.addEventListener("mouseout", mouseOutFn)
+      
+      this.eventHandler.set(mesh, mouseArrs)
     })
   }
   // 辉光
@@ -636,7 +725,7 @@ export class World extends Mini3d {
     mesh2.scale.set(0, 0, 0)
     this.quanGroup = new Group()
     this.quanGroup.add(mesh1, mesh2)
-    this.scene.add(this.quanGroup)
+    this.mapGroupContainer.add(this.quanGroup)
     this.time.on("tick", () => {
       mesh1.rotation.z += 0.05
     })
@@ -733,7 +822,7 @@ export class World extends Mini3d {
     plane01.instance.rotation.x = -Math.PI / 2
     plane01.instance.renderOrder = 6
     plane01.instance.scale.set(0, 0, 0)
-    plane01.setParent(this.scene)
+    // plane01.setParent(this.scene)
     let plane02 = new Plane(this, {
       width: max * 1.116,
       needRotate: true,
@@ -752,14 +841,16 @@ export class World extends Mini3d {
     plane02.instance.rotation.x = -Math.PI / 2
     plane02.instance.renderOrder = 6
     plane02.instance.scale.set(0, 0, 0)
-    plane02.setParent(this.scene)
+    // plane02.setParent(this.scene)
     this.rotateBorder1 = plane01.instance
     this.rotateBorder2 = plane02.instance
   }
+  // 飞线
   createFlyLine() {
     this.flyLineGroup = new Group()
     this.flyLineGroup.visible = false
-    this.scene.add(this.flyLineGroup)
+    // this.scene.add(this.flyLineGroup)
+    this.mapGroupContainer.add(this.flyLineGroup)
     const texture = this.assets.instance.getResource("mapFlyline")
     texture.wrapS = texture.wrapT = RepeatWrapping
     texture.repeat.set(0.5, 2)
@@ -835,19 +926,14 @@ export class World extends Mini3d {
     this.particles.enable = true
     this.particleGroup.visible = true
   }
-  removeInfoPoint(){
-    this.InfoPointGroup.parent.remove(this.InfoPointGroup)
-    this.infoLabelElement = []
-  }
   // 创建地图标记，以及提示信息
   createInfoPoint() {
     let self = this
     this.InfoPointGroup = new Group()
-    this.scene.add(this.InfoPointGroup)
+    this.mapGroupContainer.add(this.InfoPointGroup)
     this.InfoPointGroup.visible = false
     this.InfoPointGroup.rotation.x = -Math.PI / 2
     this.infoPointIndex = 0
-    this.infoPointLabelTime = null
     this.infoLabelElement = []
     this.allGuangquan = [] // 存储所有标记点底座旋转光圈
     let label3d = this.label3d
@@ -855,8 +941,11 @@ export class World extends Mini3d {
     const activeTexture = this.assets.instance.getResource("pointActive")
     let colors = [0xfffef4, 0x77fbf5]
     let infodata = (this.mapData[this.mapName] || provincesData).filter((item, index) => index < 7)
-    let max = infodata.reduce((pre, item)=>(item.value >= pre ? item.value : pre), 0);
+    this.spriteEventHandler = new Map();
+
     infodata.map((data, index) => {
+      let mouseArrs = []
+
       const material = new SpriteMaterial({
         map: texture,
         color: colors[index % colors.length],
@@ -889,7 +978,8 @@ export class World extends Mini3d {
       let label = infoLabel(data, label3d, this.InfoPointGroup)
       this.infoLabelElement.push(label)
       this.interactionManager.add(sprite)
-      sprite.addEventListener("mousedown", (ev) => {
+
+      let mouseDownFn = (ev) => {
         if (this.clicked || !this.InfoPointGroup.visible) return false
         this.clicked = true
         this.infoPointIndex = ev.target.userData.index
@@ -897,17 +987,28 @@ export class World extends Mini3d {
           label.visible = false
         })
         label.visible = true
-        // this.createInfoPointLabelLoop()
-      })
-      sprite.addEventListener("mouseup", (ev) => {
+        this.createInfoPointLabelLoop()
+      }
+      mouseArrs.push({eventName:"mousedown", fn: mouseDownFn})
+      sprite.addEventListener("mousedown", mouseDownFn)
+
+      let mouseupFn = (ev) => {
         this.clicked = false
-      })
-      sprite.addEventListener("mouseover", (event) => {
+      }
+      mouseArrs.push({eventName:"mouseup", fn: mouseupFn})
+      sprite.addEventListener("mouseup", mouseupFn)
+
+      let mouseoverFn = (event) => {
         document.body.style.cursor = "pointer"
-      })
-      sprite.addEventListener("mouseout", (event) => {
+      }
+      mouseArrs.push({eventName:"mouseover", fn: mouseoverFn})
+      sprite.addEventListener("mouseover", mouseoverFn)
+
+      let mouseoutFn = (event) => {
         document.body.style.cursor = "default"
-      })
+      }
+      mouseArrs.push({eventName:"mouseout", fn: mouseoutFn})
+      sprite.addEventListener("mouseout", mouseoutFn)
     })
     function infoLabel(data, label3d, labelGroup) {
       let label = label3d.create("", "info-point", true)
@@ -934,7 +1035,7 @@ export class World extends Mini3d {
       )
       label3d.setLabelStyle(label, 0.015, "x")
       label.setParent(labelGroup)
-      label.visible = true
+      label.visible = false
       return label
     }
   }

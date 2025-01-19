@@ -8,19 +8,14 @@
         </radialGradient>
         <mask :id="maskId">
           <circle :r="length" cx="0" cy="0" :fill="`url(#${radialGradientId})`">
-            <animateMotion
-              :begin="`${begin}s`"
-              :dur="`${duration}s`"
-              :path="path"
-              rotate="auto"
-              :keyPoints="`${dir[0]};${dir[1]}`"
-              keyTimes="0;1"
-              repeatCount="indefinite"
-            ></animateMotion>
+            <animateMotion :begin="`${begin}s`" :dur="`${duration}s`" :path="path" rotate="auto"
+              :keyPoints="`${dir[0]};${dir[1]}`" keyTimes="0;1" repeatCount="indefinite"></animateMotion>
           </circle>
         </mask>
       </defs>
-      <path class="path-line" :d="path" :stroke="color" :stroke-width="strokeWidth" :mask="`url(#${maskId})`" @click="$emit('clickPath')" />
+      <path class="path-line" :d="path" :stroke="color" :stroke-width="strokeWidth" :mask="`url(#${maskId})`"
+        @click="$emit('clickPath')" @mouseenter="$emit('mouseEnterPath', $event)"
+        @mouseleave="$emit('mouseLeavePath', $event)" />
     </svg>
   </div>
 </template>
@@ -97,5 +92,6 @@ export default {
 <style>
 .path-line {
   mix-blend-mode: screen;
+  cursor: pointer;
 }
 </style>

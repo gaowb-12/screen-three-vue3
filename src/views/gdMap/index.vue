@@ -2,8 +2,8 @@
   <div class="large-screen">
     <!-- 地图 -->
     <span @click="changeIsCity" class="back-world" v-if="isCity">回到世界地图</span>
-    <mapScene ref="mapSceneRef" v-if="!isCity"></mapScene>
-    <City v-else /> 
+    <mapScene ref="mapSceneRef" v-show="!isCity"></mapScene>
+    <City v-if="isCity"/> 
     <div class="large-screen-wrap" id="large-screen">
       <m-header title="北京朝阳国际数据跨境服务枢纽" sub-text="BEIJINGCHAOYANGGUOJISHUJVKUAJINGFUWUSHUNIU"></m-header>
       <!-- 左边布局 图表 -->
@@ -14,11 +14,11 @@
           <!-- 累计出境数量 -->
           <YearlyEconomyTrend></YearlyEconomyTrend>
           <!-- TOP10数据出境国家 -->
-          <DistrictEconomicIncome v-if="!isClickCityPath"></DistrictEconomicIncome>
+          <DistrictEconomicIncome v-show="!isClickCityPath"></DistrictEconomicIncome>
         </div>
       </div>
       <!-- 底边布局 图表 -->
-      <div class="bottom-wrap" v-if="!isClickCityPath">
+      <div class="bottom-wrap" v-show="!isClickCityPath">
         <div class="bottom-wrap-3d">
           <!-- 合作企业 -->
           <ProportionPopulationConsumption @clickPie="clickPie"></ProportionPopulationConsumption>
@@ -26,10 +26,10 @@
           <ElectricityUsage :pieData="pieData"></ElectricityUsage>
         </div>
       </div>
-      <div class="bottom-wrap-flow" v-if="isClickCityPath" >
+      <div class="bottom-wrap-flow" v-show="isClickCityPath" >
         <!-- 底部流程图 -->
-        <FlowImage></FlowImage>
-        <img src="@/assets/images/city/赛诺菲-流程图.png" alt="" />
+        <FlowImageCom></FlowImageCom>
+        <img :src="flowImages[currentFlowImage]" alt="" />
       </div>
       <!-- 底部托盘 -->
       <div class="bottom-tray">
@@ -86,7 +86,7 @@ import mSvglineAnimation from "@/components/mSvglineAnimation/index.vue"
 import BulkCommoditySalesChart from "./components/BulkCommoditySalesChart.vue"
 import YearlyEconomyTrend from "./components/YearlyEconomyTrend.vue"
 import DistrictEconomicIncome from "./components/DistrictEconomicIncome.vue"
-import FlowImage from "./components/FlowImage.vue"
+import FlowImageCom from "./components/FlowImage.vue"
 import ProportionPopulationConsumption from "./components/ProportionPopulationConsumption.vue"
 import ElectricityUsage from "./components/ElectricityUsage.vue"
 
@@ -94,6 +94,8 @@ import { Assets } from "./assets.js"
 import emitter from "@/utils/emitter"
 import gsap from "gsap"
 import autofit from "autofit.js"
+import sainuofeiImage from "@/assets/images/city/赛诺菲-流程图.png"
+import heliangImage from "@/assets/images/city/赫力昂-流程图.png"
 
 const City = defineAsyncComponent(() =>
   // import('./city/index.vue')
@@ -132,11 +134,24 @@ const state = reactive({
 function changeIsCity(data){
   console.log(data)
   isCity.value = !isCity.value
+  if(!isCity.value){
+    isClickCityPath.value = false
+  }
 }
 provide('changeIsCity', changeIsCity)
 
+const flowImages = ref({
+  "赛诺菲": sainuofeiImage,
+  "赫力昂": heliangImage,
+})
+const currentFlowImage = ref("")
 function changCityPath(item){
-  isClickCityPath.value = !isClickCityPath.value
+  currentFlowImage.value = item.fromName
+  if(flowImages.value[currentFlowImage.value]){
+    isClickCityPath.value = true
+  }else{
+    isClickCityPath.value = false
+  }
 }
 provide('changCityPath', changCityPath)
 

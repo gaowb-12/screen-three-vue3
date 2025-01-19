@@ -1,16 +1,16 @@
 <template>
   <div class="left-card">
-    <m-card title="跨境传输情况" subTitle="KUAJINGCHUANSHUQINGKUANG" height="340">
+    <m-card title="累计出境数量" subTitle="LEIJICHUJINGSHULIANG" height="340">
       <div class="container">
         <div class="item" v-for="item in items" :key="item.name">
           <div class="left">
             <div class="name">{{item.name}}</div>
-            <div class="num">{{item.value}}GB</div>
+            <div class="num">{{item.value}}</div>
           </div>
-          <div class="right">
+          <!-- <div class="right">
             <span class="hidden">{{item.value}}</span>
             <span class="num">{{item.value}}</span>
-          </div>
+          </div> -->
         </div>
       </div>
     </m-card>
@@ -19,13 +19,23 @@
 <script setup>
 import { ref, onMounted, nextTick, onBeforeUnmount } from "vue"
 import mCard from "@/components/mCard/index.vue"
+// 千分位加逗号
+function formatNumber(num) {
+    return String(num).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
 
 const items = ref([
-  {value:10, name:"数据传输国家数"},
-  {value:20, name:"数据传输国家数1"},
-  {value:30, name:"数据传输国家数2"},
-  {value:40, name:"数据传输国家数3"},
+  {name:" 个人信息数据量（GB）", value: "35.25GB", rate:0, upOrDown:"up"},
+  {name:" 敏感个人信息数量（GB）", value: "775.6MB", rate:0, upOrDown:"up"},
+  {name:" 个人信息出境涉及人数 ", value: 4219001, rate:0, upOrDown:"up"},
+  {name:" 敏感个人信息出境涉及人数", value: 1071080, rate:0, upOrDown:"up"},
 ])
+items.value = items.value.map(item => {
+  if (typeof item.value == "number"){
+    item.value = formatNumber(item.value);
+  }
+  return item
+});
 </script>
 <style lang="scss" scoped>
   .container{
