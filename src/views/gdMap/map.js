@@ -127,23 +127,7 @@ export class World extends Mini3d {
     this.createRotateBorder()
     // 创建地图
     this.createMap()
-    // 添加事件
-    this.createEvent()
-    // 创建飞线
-    this.createFlyLine()
-    // 创建飞线焦点
-    this.createFocus()
-    // 创建粒子
-    // this.createParticles()
-    // 创建信息点
-    this.createInfoPoint()
-    
-    // 创建轮廓
-    this.createStorke()
 
-    // this.time.on("tick", () => {
-    //   console.log(this.camera.instance.position);
-    // });
     // 创建动画时间线
     let tl = gsap.timeline({
       onComplete: () => {},
@@ -257,6 +241,7 @@ export class World extends Mini3d {
   }
 
   initToggleAnimate(){
+    this.flyLineFocusGroup.visible = false
     let duration = 1.5
     let tl = gsap.timeline({
       onComplete: () => {},
@@ -282,6 +267,7 @@ export class World extends Mini3d {
         onComplete: () => {
           this.flyLineGroup.visible = true
           this.InfoPointGroup.visible = true
+          this.flyLineFocusGroup.visible = true
           this.createInfoPointLabelLoop()
         },
       }
@@ -349,7 +335,6 @@ export class World extends Mini3d {
   createMap() {
     let mapGroup = new Group()
     let focusMapGroup = new Group()
-    focusMapGroup.name = this.mapName
     this.focusMapGroup = focusMapGroup
     // 背景地图
     // 焦点地图
@@ -367,6 +352,20 @@ export class World extends Mini3d {
     mapGroup.position.set(0, 0.2, 0)
     // this.scene.add(mapGroup)
     this.mapGroupContainer.add(mapGroup)
+    
+    // 添加事件
+    this.createEvent()
+    // 创建飞线
+    this.createFlyLine()
+    // 创建飞线焦点
+    this.createFocus()
+    // 创建粒子
+    // this.createParticles()
+    // 创建信息点
+    this.createInfoPoint()
+    
+    // 创建轮廓
+    this.createStorke()
   }
   createProvince() {
     let mapJsonData = this.assets.instance.getResource(this.mapName)
@@ -547,7 +546,6 @@ export class World extends Mini3d {
   toggleMap() {
     let mapGroup = new Group()
     let focusMapGroup = new Group()
-    focusMapGroup.name = this.mapName
     this.focusMapGroup = focusMapGroup
     // 焦点地图
     let { map, mapTop, mapLine, mapBottomeLine } = this.createProvince()
@@ -564,10 +562,12 @@ export class World extends Mini3d {
     // this.scene.add(mapGroup)
     this.mapGroupContainer.add(mapGroup)
     this.createEvent()
-    // 创建飞线
-    // this.createFlyLine()
-    // 创建飞线焦点
-    // this.createFocus()
+    if(this.mapName == "world"){
+      // 创建飞线
+      this.createFlyLine()
+      // 创建飞线焦点
+      this.createFocus()
+    }
     // 创建信息点
     this.createInfoPoint()
     // 创建地图轮廓描边
@@ -585,7 +585,6 @@ export class World extends Mini3d {
     // 移出网格事件
     this.eventHandler.forEach((items, mesh)=>{
       items.forEach(item=>{
-        console.log(item.name, mesh)
         mesh.removeEventListener(item.name, item.fn)
       })
     })
