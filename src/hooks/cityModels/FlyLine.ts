@@ -9,6 +9,7 @@ interface FlyOptions {
     uBgColor: Color; // 背景颜色
     uDuration: number; // 动画执行周期
     material?: any
+    curve?: any
 }
 const flyOptionsDefault: FlyOptions = {
     uColor: new Color(0xFFCC7E),
@@ -25,7 +26,7 @@ export const createFlyingLines = (
         const [start, end] = positions[i];
         const length = start.distanceTo(end);
         // 二次贝塞尔曲线生成飞线
-        const curve = new QuadraticBezierCurve3(
+        const curve = flyOptions.curve ? flyOptions.curve : new QuadraticBezierCurve3(
             start.clone(),
             start.clone().lerp(end, 0.5).add(new Vector3(0, length / 3, 0)), // 控制点
             end.clone()
@@ -40,9 +41,9 @@ export const createFlyingLines = (
         //设置构成这条线需要的几个点
         line.setPoints(linePoints.flat());
         //设置线段需要的材质
-        let material = new MeshLineMaterial({
+        let material = flyOptionsDefault.material ? flyOptionsDefault.material : new MeshLineMaterial({
             color: new Color(0xFFCC7E),
-            material: flyOptions.material || null,
+            // material: flyOptions.material || null,
             lineWidth: 1,
             //dashArray和dashRatio都是构成虚线的影响因素
             dashArray: 0.005,
@@ -55,27 +56,6 @@ export const createFlyingLines = (
         // material.transparent = true;//虚线功能//只要开启虚线功能后,dashArray和dashRatio才会生效
         const mesh = new Mesh(line, material);//网格=几何体+材质
         mesh.renderOrder = 10
-
-        // // 自定义着色器，控制飞线效果
-        const shaderMaterial = new ShaderMaterial({
-            fragmentShader,
-            vertexShader,
-            uniforms: {
-                uTime: { value: 0 }, // 时间
-                uLength: { value: curve.getLength() }, // 飞线长度
-                uColor: { value: flyOptions.uColor },
-                uBgColor: { value: flyOptions.uBgColor }, 
-                uDuration: { value: flyOptions.uDuration },
-            },
-            transparent: true,
-            blending: AdditiveBlending,
-        });
-        //创建线的几何体
-        let flyLine = new MeshLine();
-        //设置构成这条线需要的几个点
-        flyLine.setPoints(linePoints.flat());
-        const flyMesh = new Mesh(flyLine, shaderMaterial);//网格=几何体+材质
-        flyMesh.name="虚线-飞线"
 
         mesh.userData={
             index: i,

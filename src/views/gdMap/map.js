@@ -5,6 +5,7 @@ import {
   DirectionalLight,
   AmbientLight,
   PointLight,
+  Vector2,
   Vector3,
   MeshLambertMaterial,
   LineBasicMaterial,
@@ -29,8 +30,10 @@ import {
   DstColorFactor,
   OneFactor,
 } from "three"
-
+import { Line2 } from "three/examples/jsm/lines/Line2.js";
 import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js'
+import { LineGeometry } from "three/examples/jsm/lines/LineGeometry.js";
+
 import {
   Mini3d,
   ExtrudeMap,
@@ -54,6 +57,9 @@ import emitter from "@/utils/emitter"
 import { InteractionManager } from "three.interactive"
 import mapInfo from "./map/enumInfo"
 import {initTextureGui} from "@/hooks/cityModels/gui"
+import{createFlyingLines} from "@/hooks/cityModels/FlyLine"
+
+import {  MeshLineMaterial } from 'three.meshline';
 
 export class World extends Mini3d {
   constructor(canvas, assets, options) {
@@ -879,20 +885,48 @@ export class World extends Mini3d {
     let data = (this.mapData[this.mapName] || provincesData)
     data
       .map((city) => {
+        // 飞线起点
         let [centerX, centerY] = this.geoProjection(city.fromCenter)
         let centerPoint = new Vector3(centerX, -centerY, 0)
 
+        // 飞线终点
         let [x, y] = this.geoProjection(city.center)
         let point = new Vector3(x, -y, 0)
         const center = new Vector3()
+        // 计算控制点
         center.addVectors(centerPoint, point).multiplyScalar(0.5)
         center.setZ(3)
-        const curve = new QuadraticBezierCurve3(centerPoint, center, point)
+        // 生成三维二次贝塞尔曲线
+        const curve = new QuadraticBezierCurve3(centerPoint, center, point);
         const tubeGeometry = new TubeGeometry(curve, tubeSegments, tubeRadius, tubeRadialSegments, closed)
         const mesh = new Mesh(tubeGeometry, material)
         mesh.rotation.x = -Math.PI / 2
         mesh.position.set(0, this.depth + 0.44, 0)
         mesh.renderOrder = 21
+
+        // 虚线
+        const points = curve.getPoints(50);
+        let linePoints = points.map(point=>([point.x, point.y, point.z])).flat()
+        const lineGeometry = new LineGeometry();
+				lineGeometry.setPositions( linePoints );
+				let lineMaterial = new LineMaterial( {
+					// color: 0xFFCC7E,
+					color: 0xE58D3D,
+					linewidth: 2, 
+					dashed: true,
+          dashScale: 10,
+          dashSize: 1,
+          gapSize: 1,
+        });
+        lineMaterial.colorSpace = SRGBColorSpace
+
+				let line = new Line2( lineGeometry, lineMaterial );
+				line.computeLineDistances();
+        line.rotation.x = -Math.PI / 2
+        line.position.set(0, this.depth + 0.44, 0)
+        line.renderOrder = 22
+
+        this.flyLineGroup.add(line)
         this.flyLineGroup.add(mesh)
       })
   }
