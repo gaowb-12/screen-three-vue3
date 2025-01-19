@@ -22,7 +22,7 @@ export class Label3d {
       this.update()
     })
     this.sizes.on("resize", () => {
-      this.resize()
+      // this.resize()
     })
   }
   create(content = "", className = "", isSprite = false) {

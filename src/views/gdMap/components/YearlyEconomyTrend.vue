@@ -1,6 +1,6 @@
 <template>
   <div class="left-card">
-    <m-card title="累计出境数量" subTitle="LEIJICHUJINGSHULIANG" height="340">
+    <m-card title="累计出境数量" subTitle="LEIJICHUJINGSHULIANG" height="260">
       <div class="container">
         <div class="item" v-for="item in items" :key="item.name">
           <div class="left">
@@ -42,14 +42,14 @@ items.value = items.value.map(item => {
     height: 100%;
     box-sizing: border-box;
     background: rgba(26, 26, 26, 0.36);
-    padding: 22px 8px;
+    padding: 10px;
     display:flex;
     flex-wrap:wrap;
     justify-content: space-around;
     .item{
       display:flex;
       justify-content: space-around;
-      padding:20px 10px;
+      padding:10px;
       width:45%;
       margin-bottom: 15px;
       &:nth-child(odd){

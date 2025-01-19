@@ -163,12 +163,12 @@ onMounted(() => {
   // 监听地图播放完成，执行事件
   emitter.$on("mapPlayComplete", handleMapPlayComplete)
   // 自动适配
-  assets.value = autofit.init({
-    dh: 1080,
-    dw: 1920,
-    el: "#large-screen",
-    resize: true,
-  })
+  // assets.value = autofit.init({
+  //   dh: 1080,
+  //   dw: 1920,
+  //   el: "#large-screen",
+  //   resize: false,
+  // })
   // 初始化资源
   initAssets(async () => {
     // 加载地图
@@ -269,6 +269,31 @@ function handleMapPlayComplete() {
     "card"
   )
 }
+
+function resizePage() {
+  const designWidth = 1920;
+  const designHeight = 1080;
+  const resize = () => {
+    const windowWidth = window.innerWidth;
+    const windowHeight = window.innerHeight;
+    const scale = Math.min(windowWidth / designWidth, windowHeight / designHeight);
+    const xOffset = (windowWidth - designWidth * scale) / 2;
+    const yOffset = (windowHeight - designHeight * scale) / 2;
+    const largeScreen = document.querySelector('.large-screen')  as HTMLElement;
+    if (largeScreen) {
+      largeScreen.style.transform = `scale(${scale}) translate(${xOffset / scale}px, ${yOffset / scale}px)`;
+      largeScreen.style.transformOrigin = 'top left';
+    }
+  };
+  window.addEventListener('resize', resize);
+  resize();
+}
+
+onMounted(() => {
+  resizePage();
+  // existing onMounted code...
+});
+
 </script>
 
 <style lang="scss">

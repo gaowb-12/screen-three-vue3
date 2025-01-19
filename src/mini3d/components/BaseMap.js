@@ -15,6 +15,9 @@ import {
 import { transfromMapGeoJSON, getBoundBox } from "@/mini3d"
 import { geoMercator } from "d3-geo"
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils"
+import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry";
+import helvetikerFontJson from "three/examples/fonts/helvetiker_regular.typeface.json";
+import { FontLoader } from "three/examples/jsm/loaders/FontLoader";
 export class BaseMap {
   constructor({}, config = {}) {
     this.mapGroup = new Group()
@@ -53,7 +56,20 @@ export class BaseMap {
 
       let { name, center = [], centroid = [] } = feature.properties
       this.coordinates.push({ name, center, centroid })
-      group.userData.name = name
+      group.userData.name = name;
+
+      // if (center.length === 2) {
+      //   const [cx, cy] = this.geoProjection(center);
+      //   const textGeometry = new TextGeometry(name, {
+      //     font: new FontLoader().parse(helvetikerFontJson), // You need to load and parse the font JSON
+      //     size: 10,
+      //     height: 0.1,
+      //   });
+      //   const textMaterial = new MeshBasicMaterial({ color: 0xffffff });
+      //   const textMesh = new Mesh(textGeometry, textMaterial);
+      //   textMesh.position.set(cx, -cy, 0.8);
+      //   group.add(textMesh);
+      // }
       feature.geometry.coordinates.forEach((multiPolygon) => {
         multiPolygon.forEach((polygon) => {
           const shape = new Shape()

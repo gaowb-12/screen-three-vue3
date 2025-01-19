@@ -10,7 +10,7 @@ export default [
 
   {
     name: "朝阳区",
-    center: [116.486409,39.921489],
+    center: [116.513687,39.951064],
     value: 100,
     fromName: "北京福莱森特",
     toName: "澳大利亚",
@@ -19,7 +19,7 @@ export default [
   },
   {
     name: "朝阳区",
-    center: [116.486409,39.921489],
+    center: [116.513687,39.951064],
     value: 100,
     fromName: "赛诺菲（负面清单）",
     toName: "法国",
@@ -28,7 +28,7 @@ export default [
   },
   {
     name: "朝阳区",
-    center: [116.486409,39.921489],
+    center: [116.513687,39.951064],
     value: 100,
     fromName: "艺龙网信息技术（北京）有限公司",
     toName: "新加坡、美国、荷兰",
@@ -37,7 +37,7 @@ export default [
   },
   {
     name: "朝阳区",
-    center: [116.486409,39.921489],
+    center: [116.513687,39.951064],
     value: 100,
     fromName: "美团（北京西瓜国际旅行社有限公司）",
     toName: "泰国、中国澳门、泰国、马来西亚、中国香港、印度尼西亚、日本、菲律宾、美国、韩国、新加坡、越南、阿拉伯联合酋长国、中国台湾、西班牙、柬埔寨、希腊、墨西哥、缅甸、马尔代夫",
@@ -46,7 +46,7 @@ export default [
   },
   {
     name: "朝阳区",
-    center: [116.486409,39.921489],
+    center: [116.513687,39.951064],
     value: 32,
     fromName: "老虎证券（北京优虎网络科技有限公司）",
     toName: "新西兰",
@@ -55,7 +55,7 @@ export default [
   },
   {
     name: "朝阳区",
-    center: [116.486409,39.921489],
+    center: [116.513687,39.951064],
     value: 32,
     fromName: "丰田汽车（中国）投资有限公司",
     toName: "日本、德国",
@@ -64,7 +64,7 @@ export default [
   },
   {
     name: "朝阳区",
-    center: [116.486409,39.921489],
+    center: [116.513687,39.951064],
     value: 32,
     fromName: "日立能源（中国）有限公司",
     toName: "日本",
@@ -73,11 +73,11 @@ export default [
   },
   {
     name: "东城区",
-    center: [116.418757,39.917544],
+    center: [116.416718,39.912934],
     value: 32,
     fromName: "北京妇产医院",
     toName: "韩国",
     transmissionNum: 800,
     sensitiveNum: 800,
-  }
+  },
 ];

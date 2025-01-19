@@ -18,7 +18,7 @@ export class Mini3d extends EventEmitter {
     });
     this.renderer = new Renderer(this);
     this.sizes.on("resize", () => {
-      this.resize();
+      // this.resize();
     });
     this.time.on("tick", (delta) => {
       this.update(delta);

@@ -636,7 +636,7 @@ export class World extends Mini3d {
       
       let mouseDownFn = (ev) => {
         this.camera.instance.updateProjectionMatrix()
-        console.log('---点击地图---',ev.target, this.camera.instance)
+        console.log('---点击地图---',ev.target)
         this.downDrill(ev.target)
       }
       mouseArrs.push({eventName:"mousedown", fn: mouseDownFn})
