@@ -356,12 +356,13 @@ export class World extends Mini3d {
     this.focusMapGroup = focusMapGroup
     // 背景地图
     // 焦点地图
-    let { map, mapTop, mapLine } = this.createProvince()
+    let { map, mapTop, mapLine, mapBottomeLine } = this.createProvince()
     // 创建扩散
     // this.createDiffuse()
     map.setParent(focusMapGroup)
     mapTop.setParent(focusMapGroup)
     mapLine.setParent(focusMapGroup)
+    mapBottomeLine.setParent(focusMapGroup)
     focusMapGroup.position.set(0, 0, -0.01)
     focusMapGroup.scale.set(1, 1, 0)
     mapGroup.add(focusMapGroup)
@@ -438,10 +439,32 @@ export class World extends Mini3d {
     this.mapLineLightMaterial.linewidth = 2
 
     mapLine.lineGroup.position.z += this.depth + 0.23
+
+
+    let mapBottomeLineMaterial = new LineMaterial({
+      color: 0x31c0da,
+      linewidth: 1,
+      fog: false,
+    })
+    // 地图内部区域边界线
+    let mapBottomeLine = new Line(this, {
+      geoProjectionCenter: this.geoProjectionCenter,
+      geoProjectionScale: this.geoProjectionScale,
+      data: mapJsonData,
+      material: mapBottomeLineMaterial,
+      renderOrder: 2,
+      type:"Line2"
+    })
+    mapBottomeLine.lineGroup.position.z += this.depth - 0.46;
+    mapBottomeLine.lineGroup.scale.set(1.02, 1.02, 1)
+    mapBottomeLine.lineGroup.traverse(line=>{
+      line.lineName = "mapBottomeLine"
+    })
     return {
       map,
       mapTop,
       mapLine,
+      mapBottomeLine,
     }
   }
   createProvinceMaterial() {
