@@ -40,23 +40,23 @@ const chart = ref()
 
 let colors = ["#09BD2B", "#FF891D", "#1890FF", "#3BD3BF", "#9D1DFF", "#D9D9D9"]
 const state = reactive<State>({
-  selected: {"0": true},
+  selected: {},
   pieDataColor: colors,
   pieData: [
-    {name:"	金融机构	", value:	1	 },
-    {name:"	金融科技	", value:	1	 },
-    {name:"	科技推广和应用服务业	", value:	1	 },
-    {name:"	汽车行业	", value:	1	 },
-    {name:"	人工智能	", value:	1	 },
-    {name:"	商务服务业	", value:	2	 },
-    {name:"	生物技术推广服务行业	", value:	1	 },
-    {name:"	数字科技行业	", value:	1	 },
-    {name:"	所属行业	", value:	1	 },
-    {name:"	投资与资产管理	", value:	1	 },
-    {name:"	医疗卫生	", value:	1	 },
-    {name:"	医药行业	", value:	1	 },
-    {name:"	医药制造业	", value:	1	 },
-    {name:"	租赁和商务服务	", value:	1	 },
+    {name:"金融机构", value:	1	 },
+    {name:"金融科技", value:	1	 },
+    {name:"科技推广和应用服务业", value:	1	 },
+    {name:"汽车行业", value:	1	 },
+    {name:"人工智能", value:	1	 },
+    {name:"商务服务业", value:	2	 },
+    {name:"生物技术推广服务行业", value:	1	 },
+    {name:"数字科技行业", value:	1	 },
+    {name:"所属行业", value:	1	 },
+    {name:"投资与资产管理", value:	1	 },
+    {name:"医疗卫生", value:	1	 },
+    {name:"医药行业", value:	1	 },
+    {name:"医药制造业", value:	1	 },
+    {name:"租赁和商务服务", value:	1	 },
   ],
 })
 const option = ref({
@@ -78,7 +78,7 @@ const option = ref({
         // borderColor: "rgba(26, 57, 77,1)",
         borderRadius: 2
       },
-      selected: state.selected,
+      selected:{},
       padAngle: 5,
       label: { show: false },
       radius: ["55%", "70%"],
@@ -90,13 +90,10 @@ const option = ref({
 function clickPie(){
   chart.value.chart.on('click', (params) => {
     // 更新选中状态
-    state.selected = { [params.dataIndex]: true };
-    chart.value.chart.setOption({
-      ...option,
-      series: {
-        selected: state.selected
-      },
-    });
+    state.selected = { [params.dataIndex]: state.selected && state.selected[params.dataIndex] ? false : true };
+    option.value.series.selected = state.selected
+    chart.value.chart.setOption(option.value);
+    if(!state.selected[params.dataIndex] && params.data) params.data.name = null
     emit("clickPie", params);
   });
 }

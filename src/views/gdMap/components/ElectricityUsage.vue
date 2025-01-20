@@ -15,7 +15,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount, nextTick, watch } from "vue"
+import { ref, watch } from "vue"
 import mCard from "@/components/mCard/index.vue"
 
 const props = defineProps<{
@@ -126,20 +126,17 @@ let initData = [
 ]
 const tableData = ref(initData)
 function watchPieData(data){
-  if(data.name=="类型1"){
+  if(data.name === null)
     tableData.value = initData
-  }else if(data.name=="类型2"){
-    tableData.value = initData
-  } else{
-    tableData.value = initData
-  }
+  else
+    tableData.value = initData.filter(item=>item.industry == data.name)
 }
 watch(
   () => props.pieData,
   (newData, oldData) => {
     watchPieData(newData || {})
   },
-  { deep: true, immediate: true }
+  { deep: true, }
 )
 
 </script>

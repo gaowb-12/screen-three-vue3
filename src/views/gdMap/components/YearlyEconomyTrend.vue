@@ -26,7 +26,7 @@ function formatNumber(num) {
 
 const items = ref([
   {name:" 个人信息数据量（GB）", value: "35.25GB", rate:0, upOrDown:"up"},
-  {name:" 敏感个人信息数量（GB）", value: "775.6MB", rate:0, upOrDown:"up"},
+  {name:" 敏感个人信息数量（MB）", value: "775.6MB", rate:0, upOrDown:"up"},
   {name:" 个人信息出境涉及人数 ", value: 4219001, rate:0, upOrDown:"up"},
   {name:" 敏感个人信息出境涉及人数", value: 1071080, rate:0, upOrDown:"up"},
 ])
