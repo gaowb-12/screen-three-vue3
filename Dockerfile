@@ -2,7 +2,7 @@
 FROM registry.cn-beijing.aliyuncs.com/sf-service/node:20.13.1 as build-stage
 WORKDIR /app
 COPY package*.json ./
-COPY yarn.lock ./
+
 
 RUN npm config set registry https://registry.npmmirror.com
 # RUN yarn config set registry https://registry.npm.taobao.org
