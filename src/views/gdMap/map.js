@@ -246,20 +246,17 @@ export class World extends Mini3d {
   initToggleAnimate(){
     this.flyLineFocusGroup.visible = false
     let duration = 1.5
-    let tl = gsap.timeline({
-      onComplete: () => {},
-    })
-    tl.to(
+    gsap.to(
       this.focusMapGroup.position,
       {
         duration,
         x: 0,
         y: 0,
         z: 0,
+        ease: "circ.out",
       }
     )
-
-    tl.to(
+    gsap.to(
       this.focusMapGroup.scale,
       {
         duration,
@@ -276,29 +273,28 @@ export class World extends Mini3d {
       }
     )
     this.allGuangquan.map((item, index) => {
-      tl.to(
+      let i = index + 1
+      gsap.to(
         item.children[0].scale,
         {
           duration,
-          delay: 0.1 * index,
+          delay: 1 + 0.1 * i,
           x: 1,
           y: 1,
           z: 1,
           ease: "circ.out",
-        },
-        "bar"
+        }
       )
-      tl.to(
+      gsap.to(
         item.children[1].scale,
         {
           duration,
-          delay: 0.1 * index,
+          delay: 1 + 0.1 * i,
           x: 1,
           y: 1,
           z: 1,
           ease: "circ.out",
-        },
-        "bar"
+        }
       )
     })
   }
@@ -363,11 +359,11 @@ export class World extends Mini3d {
     
     // 创建轮廓
     this.createStorke()
-    let num = 0;
-    this.scene.traverse(child=>{
-      num++
-    })
-    console.log(`---当前的场景有多少物体数量：${num}---`,this.scene)
+    // let num = 0;
+    // this.scene.traverse(child=>{
+    //   child.isMesh ? num++ : null
+    // })
+    // console.log(`---当前的场景有多少物体数量：${num}---`,this.scene)
   }
   createProvince() {
     let mapJsonData = this.assets.instance.getResource(this.mapName)
@@ -581,11 +577,11 @@ export class World extends Mini3d {
     // 创建地图轮廓描边
     this.createStorke()
     this.initToggleAnimate()
-    let num = 0;
-    this.scene.traverse(child=>{
-      num++
-    })
-    console.log(`---当前的场景有多少物体数量：${num}---`,this.scene)
+    // let num = 0;
+    // this.scene.traverse(child=>{
+    //   child.isMesh ? num++ : null
+    // })
+    // console.log(`---当前的场景有多少物体数量：${num}---`,this.scene)
   }
   removeRelatedEvent(){
     // 移出精灵图事件
