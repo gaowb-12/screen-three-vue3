@@ -2,10 +2,10 @@
   <div class="large-screen">
     <!-- 地图 -->
     <span @click="changeIsCity" class="back-world" v-if="isCity">回到世界地图</span>
-    <mapScene ref="mapSceneRef" v-show="!isCity"></mapScene>
+    <mapScene ref="mapSceneRef" :style="{visibility: !isCity?'visible':'hidden', zIndex:!isCity?-1:1 }"></mapScene>
     <City v-if="isCity"/> 
     <div class="large-screen-wrap" id="large-screen">
-      <m-header title="北京朝阳国际数据跨境服务枢纽" sub-text="BEIJINGCHAOYANGGUOJISHUJVKUAJINGFUWUSHUNIU"></m-header>
+      <m-header title="北京朝阳国际数据跨境服务枢纽" sub-text="Beijing Chaoyang International Cross Border Data Flow Service Hub"></m-header>
       <!-- 左边布局 图表 -->
       <div class="left-wrap">
         <div class="left-wrap-3d">

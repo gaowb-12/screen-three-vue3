@@ -1,6 +1,6 @@
 <template>
   <div class="right-card">
-    <m-card title="电子商务行业企业跨境传输路径情况" sub-title="DIANGZISHANGWU HANGYE QIYE KUAJING SHUANSHULUJINGQINGKUANG" :width="1000">
+    <m-card title="企业跨境传输情况" sub-title="CROSS-BORDER TRANSMISSION OF ENTERPRISES" :width="1000">
       <div class="container">
         <el-table :data="tableData" height="100%" style="width: 100%">
           <!-- <el-table-column prop="company" label="名称" show-overflow-tooltip /> -->

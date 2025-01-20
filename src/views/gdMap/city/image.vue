@@ -242,7 +242,9 @@ onMounted(()=>{
 .container {
     width: 100%;
     height: 100%;
-    position: relative;
+    position: absolute;
+    left: 0;
+    top: 0;
     transform: scale(0, 0);
     .city-image {
         width: 100%;
@@ -294,7 +296,8 @@ onMounted(()=>{
         position: fixed;
         left: 50%;
         top: 50%;
-        background: rgba(0, 4, 5, 0.8);
+        background: rgba(0, 4, 5, 0.6);
+        backdrop-filter: blur(10px);
         padding: 15px;
         will-change: transform;
         border-top: 6px solid #1EFF62;

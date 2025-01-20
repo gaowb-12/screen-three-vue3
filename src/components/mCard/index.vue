@@ -207,25 +207,25 @@ onMounted(() => {
       box-sizing: border-box;
       width:100%;
       color: #fff;
-      letter-spacing: 0.04em;
+      // letter-spacing: 0.04em;
       height: 36px;
       line-height: 36px;
       font-family: "YouSheBiaoTiHei";
-      font-size: 20px;
+      font-size: 19px;
       font-weight: 600;
       white-space:nowrap;
       // background: -webkit-linear-gradient(rgba(219, 249, 255, 1), rgba(169, 240, 255, 1));
       // -webkit-background-clip: text;
       // -webkit-text-fill-color: transparent;
 
-      background: linear-gradient(0deg, #615c5c 11%, #FFFFFF 82%);;
+      background: linear-gradient(0deg, #c1c1c1 11%, #FFFFFF 82%);;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
       text-fill-color: transparent;
       box-shadow: 2px 2px 3px 0px rgba(14, 14, 14, 0.5);
       span{
-        background: linear-gradient(90deg, #888888 10%, rgba(0, 0, 0, 0.8) 82%);
+        background: linear-gradient(90deg, #888888 10%, rgba(100, 92, 92, 0.8) 82%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -264,7 +264,7 @@ onMounted(() => {
     }
     .arrow-right {
       position: absolute;
-      right: 20px;
+      right: 10px;
       top: 18px;
       height:4px;
       border-right:4px solid #fff;

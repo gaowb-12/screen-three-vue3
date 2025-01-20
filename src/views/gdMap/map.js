@@ -56,7 +56,7 @@ import gsap from "gsap"
 import emitter from "@/utils/emitter"
 import { InteractionManager } from "three.interactive"
 import mapInfo from "./map/enumInfo"
-import {initTextureGui} from "@/hooks/cityModels/gui"
+import { initTextureGui } from "@/hooks/cityModels/gui"
 export class World extends Mini3d {
   constructor(canvas, assets, options) {
     super(canvas)
@@ -84,6 +84,9 @@ export class World extends Mini3d {
     this.assets = assets
 
     this.scene.background = this.assets.instance.getResource("geoMapBgTexture")
+    this.scene.backgroundBlurriness = 0.4
+    this.scene.backgroundIntensity = 0.2
+
     this.mapGroupContainer = new Group()
     this.scene.add(this.mapGroupContainer)
     // 相机初始位置
@@ -303,21 +306,20 @@ export class World extends Mini3d {
   initEnvironment() {
     let sun = new AmbientLight(0xffffff, 5)
     this.scene.add(sun)
-    let directionalLight = new DirectionalLight(0xffffff, 5)
-    directionalLight.position.set(-30, 6, -8)
-    directionalLight.castShadow = true
-    directionalLight.shadow.radius = 20
+    let directionalLight = new DirectionalLight(0xffffff, 3)
+    directionalLight.position.set(-10, 5, -8)
+    directionalLight.shadow.radius = 12
     directionalLight.shadow.mapSize.width = 1024
     directionalLight.shadow.mapSize.height = 1024
     this.scene.add(directionalLight)
-    this.createPointLight({
-      color: "#1d5e5e",
-      intensity: 800,
-      distance: 10000,
-      x: -9,
-      y: 3,
-      z: -3,
-    })
+    // this.createPointLight({
+    //   color: "#1d5e5e",
+    //   intensity: 800,
+    //   distance: 10000,
+    //   x: -9,
+    //   y: 3,
+    //   z: -3,
+    // })
     this.createPointLight({
       color: "#1d5e5e",
       intensity: 200,
@@ -336,11 +338,8 @@ export class World extends Mini3d {
     let mapGroup = new Group()
     let focusMapGroup = new Group()
     this.focusMapGroup = focusMapGroup
-    // 背景地图
-    // 焦点地图
+    // 地图
     let { map, mapTop, mapLine, mapBottomeLine } = this.createProvince()
-    // 创建扩散
-    // this.createDiffuse()
     map.setParent(focusMapGroup)
     mapTop.setParent(focusMapGroup)
     mapLine.setParent(focusMapGroup)
@@ -359,13 +358,16 @@ export class World extends Mini3d {
     this.createFlyLine()
     // 创建飞线焦点
     this.createFocus()
-    // 创建粒子
-    // this.createParticles()
     // 创建信息点
     this.createInfoPoint()
     
     // 创建轮廓
     this.createStorke()
+    let num = 0;
+    this.scene.traverse(child=>{
+      num++
+    })
+    console.log(`---当前的场景有多少物体数量：${num}---`,this.scene)
   }
   createProvince() {
     let mapJsonData = this.assets.instance.getResource(this.mapName)
@@ -392,6 +394,8 @@ export class World extends Mini3d {
       map: mapTexture,
       transparent: true,
       opacity: 1,
+      metalness:0.2,
+      roughness:0.3
     })
 
     // 地图鼠标hover状态时材质
@@ -417,7 +421,7 @@ export class World extends Mini3d {
     })
     this.mapLineMaterial = new LineMaterial({
       color: 0xE58D3D,
-      linewidth: 1,
+      linewidth: 1.5,
       fog: false,
     })
     // 地图内部区域边界线
@@ -432,7 +436,7 @@ export class World extends Mini3d {
     // 地图鼠标hover状态时材质
     this.mapLineLightMaterial = this.mapLineMaterial.clone()
     this.mapLineLightMaterial.color = new Color("#4EFFFF")
-    this.mapLineLightMaterial.linewidth = 2
+    this.mapLineLightMaterial.linewidth = 3
 
     mapLine.lineGroup.position.z += this.depth + 0.23
 
@@ -515,41 +519,45 @@ export class World extends Mini3d {
   
   // 移除所有子节点
   removeAllChildren(parent) {
+    let childs = []
+    parent.traverse(( object ) => {
+      object.isMesh && childs.push( object );
+    } );
+    childs.forEach(child => {
+      child.geometry?.dispose();
+      if (child.material) {
+        if (child.material.isMaterial) {
+            this.cleanMaterial(child.material);
+        } else {
+            // 多材质合集
+            for (const m of child.material) this.cleanMaterial(m);
+        }
+      }
+      child.texture?.dispose();
+      this.scene.remove( child );
+    });
     while (parent.children.length > 0) {
       const child = parent.children[0];
       parent.remove(child);
-      // 可选：如果你想彻底删除对象，可以调用dispose()方法
-      // 对于几何体(Geometry)、材质(Material)和纹理(Texture)等对象
-      if (child.geometry) child.geometry.dispose();
-      if (child.material) {
-          if (child.material.isMaterial) {
-              this.cleanMaterial(child.material);
-          } else {
-              // 多材质合集
-              for (const m of child.material) this.cleanMaterial(m);
-          }
-      }
-      if (child.texture) child.texture.dispose();
+      child.geometry?.dispose();
     }
   }
   // 清理内存
   cleanMaterial(material) {
       material.dispose();
-      if (material.map) material.map.dispose();
-      if (material.lightMap) material.lightMap.dispose();
-      if (material.bumpMap) material.bumpMap.dispose();
-      if (material.normalMap) material.normalMap.dispose();
-      if (material.specularMap) material.specularMap.dispose();
-      if (material.envMap) material.envMap.dispose();
-      // ... 其他可能的纹理属性
+      material.map?.dispose();
+      material.lightMap?.dispose();
+      material.bumpMap?.dispose();
+      material.normalMap?.dispose();
+      material.specularMap?.dispose();
+      material.envMap?.dispose();
   }
   toggleMap() {
     let mapGroup = new Group()
     let focusMapGroup = new Group()
     this.focusMapGroup = focusMapGroup
-    // 焦点地图
+    // 地图
     let { map, mapTop, mapLine, mapBottomeLine } = this.createProvince()
-    // 创建扩散
     map.setParent(focusMapGroup)
     mapTop.setParent(focusMapGroup)
     mapLine.setParent(focusMapGroup)
@@ -558,7 +566,7 @@ export class World extends Mini3d {
     focusMapGroup.scale.set(0, 0, 0)
     mapGroup.add(focusMapGroup)
     mapGroup.rotation.x = -Math.PI / 2
-    mapGroup.position.set(0, 0.5, 0)
+    mapGroup.position.set(0, 0.2, 0)
     // this.scene.add(mapGroup)
     this.mapGroupContainer.add(mapGroup)
     this.createEvent()
@@ -573,6 +581,11 @@ export class World extends Mini3d {
     // 创建地图轮廓描边
     this.createStorke()
     this.initToggleAnimate()
+    let num = 0;
+    this.scene.traverse(child=>{
+      num++
+    })
+    console.log(`---当前的场景有多少物体数量：${num}---`,this.scene)
   }
   removeRelatedEvent(){
     // 移出精灵图事件
@@ -673,7 +686,6 @@ export class World extends Mini3d {
       
       let mouseDownFn = (ev) => {
         this.camera.instance.updateProjectionMatrix()
-        console.log('---点击地图---',ev.target)
         this.downDrill(ev.target)
       }
       mouseArrs.push({eventName:"mousedown", fn: mouseDownFn})
@@ -823,7 +835,7 @@ export class World extends Mini3d {
   }
   // 地图背景
   createChinaBlurLine() {
-    let geometry = new PlaneGeometry(120, 120)
+    let geometry = new PlaneGeometry(200, 200)
     const texture = this.assets.instance.getResource("worldBlurLine")
     texture.colorSpace = SRGBColorSpace
     texture.wrapS = RepeatWrapping
@@ -834,11 +846,16 @@ export class World extends Mini3d {
     let material = new MeshBasicMaterial({
       map: texture,
       transparent: true,
-      opacity: 0.6,
+      opacity: 1,
     })
+    
+    texture.matrixAutoUpdate = false
+    texture.needsUpdate = true
+    initTextureGui(texture)
+
     let mesh = new Mesh(geometry, material)
-    mesh.rotateX(-Math.PI / 2)
-    mesh.position.set(-19.3, -0.5, -19.7)
+    mesh.rotateX(-Math.PI / 3)
+    mesh.position.set(-10.3, -1, -10.7)
     this.scene.add(mesh)
   }
   createRotateBorder() {
@@ -941,15 +958,14 @@ export class World extends Mini3d {
         const lineGeometry = new LineGeometry();
 				lineGeometry.setPositions( linePoints );
 				let lineMaterial = new LineMaterial( {
-					// color: 0xFFCC7E,
-					color: 0xE58D3D,
-					linewidth: 2, 
+					color: 0x999999,
+					// color: 0xE58D3D,
+					linewidth: 1.5, 
 					dashed: true,
           dashScale: 10,
           dashSize: 1,
           gapSize: 1,
         });
-        lineMaterial.colorSpace = SRGBColorSpace
 
 				let line = new Line2( lineGeometry, lineMaterial );
 				line.computeLineDistances();

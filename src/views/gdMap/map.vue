@@ -50,7 +50,8 @@ defineExpose({
   bottom: 0;
   background-color: #000;
   .info-point {
-    background: rgba(0, 4, 5, 0.8);
+    background: rgba(0, 4, 5, 0.6);
+    backdrop-filter: blur(10px);
     // width: 200px;
     padding: 15px;
     will-change: transform;

@@ -1,6 +1,6 @@
 <template>
   <div class="left-card">
-    <m-card title="TOP10数据出境国家" subTitle="KUAJINGCHUANSHUQINGKUANG" height="454">
+    <m-card title="TOP10数据接收方国家" subTitle="TOP10 DATA RECIPIENT COUNTRIES" height="454">
       <div class="container">
         <div class="item" v-for="item in items" :key="item.name">
           <div class="name">{{item.name}}</div>
@@ -55,7 +55,7 @@ function getRate(value){
       .name{
         font-family: "Alibaba", "PuHuiTi", 3.0;
         font-size: 14px;
-        color: #888888;
+        color: rgba(178, 178, 178,1);
         width: 80px;
       }
       .progress{
@@ -84,7 +84,7 @@ function getRate(value){
         width: 60px;
         font-weight: bold;
         font-family: "Alibaba", "PuHuiTi", 3.0;
-        font-size: 14px;
+        font-size: 16px;
         color: #FFFFFF;
         text-align: right;
       }

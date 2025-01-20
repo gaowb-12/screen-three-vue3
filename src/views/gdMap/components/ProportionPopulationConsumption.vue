@@ -1,10 +1,10 @@
 <template>
   <div class="right-card">
-    <m-card title="合作企业" sub-title="HEZUOQIYE" :width="290">
+    <m-card title="合作企业" sub-title="COOPERATIVE ENTERPRISE" :width="320">
       <div class="population-proportion">
         <div class="population-proportion-chart">
           <v-chart ref="chart" :option="option" :autoresize="true" />
-          <!-- <div class="label-name">消费占比</div> -->
+          <div class="label-name">合作企业</div>
         </div>
         <div class="pie-legend">
           <div class="pie-legend-item" v-for="(item, index) in state.pieData" :key="index">
@@ -103,6 +103,15 @@ onMounted(()=>{
 
 </script>
 <style lang="scss">
+// 360旋转
+@keyframes pieRotate360Animate {
+  0% {
+    transform:translate(-50%, -50%) rotate(0);
+  }
+  100% {
+    transform:translate(-50%, -50%) rotate(360deg);
+  }
+}
   .pie-chat-wrap {
     width: 100%;
     height: 100%;
@@ -209,9 +218,9 @@ onMounted(()=>{
     position: relative;
     width: 160px;
     height: 100%;
-    margin-left: 15px;
-    // background: url("~@/assets/images/pie/pie-zs-bg.png") no-repeat;
-    // background-size: cover;
+    background: url("~@/assets/images/pie/pie-zs-bg.png") no-repeat;
+    background-size: contain;
+    background-position: 0, 20px;
     .label-name {
       position: absolute;
       left: 50%;
@@ -230,17 +239,19 @@ onMounted(()=>{
       position: absolute;
       left: 50%;
       top: 50%;
+      transform: translate(-50%, -50%);
       z-index: -1;
       content: "";
-      width: 122px;
-      height: 122px;
-      transform: translate(-50%, -50%);
-      border: 1.5px solid #FFFFFF;
+      // width: 122px;
+      // height: 122px;
+      width: 72px;
+      height: 72px;
+      // border: 1.5px solid #FFFFFF;
       border-radius: 50%;
-      opacity: 0.3;
-      // background: url("~@/assets/images/pie/pie-mid-circle.png") no-repeat;
-      // background-size: cover;
-      // animation: rotate360Animate 2s linear infinite;
+      opacity: 0.8;
+      background: url("~@/assets/images/pie/pie-mid-circle.png") no-repeat;
+      background-size: cover;
+      animation: pieRotate360Animate 2s linear infinite;
     }
   }
 }

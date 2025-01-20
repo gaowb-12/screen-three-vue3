@@ -1,6 +1,6 @@
 <template>
   <div class="left-card">
-    <m-card title="累计出境数量" subTitle="LEIJICHUJINGSHULIANG" height="260">
+    <m-card title="累计出境数量" subTitle="TOTAL EXPORTED QUANTITY" height="260">
       <div class="container">
         <div class="item" v-for="item in items" :key="item.name">
           <div class="left">
@@ -69,7 +69,7 @@ items.value = items.value.map(item => {
         .name{
           font-family: Alibaba PuHuiTi 3.0;
           font-size: 12px;
-          color: rgba(178, 178, 178,0.6);
+          color: rgba(178, 178, 178,1);
         }
       }
       .right{
