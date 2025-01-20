@@ -1,0 +1,159 @@
+
+stages:
+  - build
+  - deploy
+  - notify
+cache:
+  paths:
+    - node_modules/
+
+development-build:
+  stage: build
+  only:
+    - beta
+#    - /^beta-v.*$/  # 只在新建标签规则为 beta-v* 时触发任务
+  tags:
+    - docker
+  script:
+    - pwd
+    - docker login --username=北京数风科技有限公司 --password=${ALIDOCKERPWD} registry.cn-beijing.aliyuncs.com
+    - docker build --build-arg ENV_VAR=stage -t sf-screen-vue3:$CI_COMMIT_SHORT_SHA .
+
+deploy_development:
+  stage: deploy
+  tags:
+    - docker
+  only:
+    - beta
+#    - /^beta-v.*$/  # 只在新建标签规则为 beta-v* 时触发任务
+  needs: [development-build]
+  script:
+    - docker stop sf-screen-vue3 || true
+    - docker rm sf-screen-vue3 || true
+    - sleep 2
+    - docker run -d -p 9023:80 --restart=always --name sf-screen-vue3 sf-screen-vue3:$CI_COMMIT_SHORT_SHA
+
+
+release-build:
+  stage: build
+  only:
+    - /^release-v.*$/  # 只在新建标签规则为 release-v* 时触发任务
+  tags:
+    - centos
+  script:
+    - echo '${CI_COMMIT_MESSAGE}'
+    - |-
+      PAYLOAD=$(cat << JSON
+      {
+        "msgtype": "template_card",
+        "template_card": {
+          "main_title": {
+            "title": "正在打包正式镜像至镜像仓库项目：${CI_PROJECT_NAME}",
+            "desc": "版本：'${CI_COMMIT_REF_NAME}'"
+          },
+          "source": {
+            "icon_url": "https://wework.qpic.cn/wwpic/252813_jOfDHtcISzuodLa_1629280209/0",
+            "desc": "部署人：@${GITLAB_USER_NAME}",
+            "desc_color": 0
+          },
+          "sub_title_text": "版本信息：${CI_COMMIT_TAG_MESSAGE}",
+          "card_type": "text_notice",
+          "card_action": {
+            "type": 1,
+            "url": "http://47.94.239.198:1086/front/sf-screen-vue3/-/pipelines"
+          }
+        }
+      }
+      JSON
+      )
+    - echo "$PAYLOAD"
+    - |
+      curl -X "POST" "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=05da0775-c1f6-4d60-aa7f-044d753c0fd0" \
+      -H 'Content-Type: application/json' \
+      --data-binary "${PAYLOAD}"
+      # 提取版本号
+    - VERSION=$(echo $CI_COMMIT_REF_NAME | sed 's/release-v//')
+    - pwd
+    - docker login --username=北京数风科技有限公司 --password=${ALIDOCKERPWD} registry.cn-beijing.aliyuncs.com
+    - docker build --build-arg ENV_VAR=prod -t registry.cn-beijing.aliyuncs.com/sf-service/sf-screen-vue3:$VERSION .
+    - docker push registry.cn-beijing.aliyuncs.com/sf-service/sf-screen-vue3:$VERSION
+    - docker tag registry.cn-beijing.aliyuncs.com/sf-service/sf-screen-vue3:$VERSION registry.cn-beijing.aliyuncs.com/sf-service/sf-screen-vue3:latest
+    - docker push registry.cn-beijing.aliyuncs.com/sf-service/sf-screen-vue3:latest
+
+  # 定义发送通知作业，在部署成功后发送企业微信消息
+
+notify_success:
+  stage: notify
+  only:
+    - beta
+#    - /^beta-v.*$/  # 只在新建标签规则为 preview-v* 时触发任务
+    - /^preview-v.*$/
+    - /^release-v.*$/
+  # 仅在deploy_docker_image作业成功完成后触发通知作业
+  when: on_success
+  script:
+    - echo '${CI_COMMIT_MESSAGE}'
+    - |-
+      PAYLOAD=$(cat << JSON
+      {
+        "msgtype": "template_card",
+        "template_card": {
+          "main_title": {
+            "title": "项目：${CI_PROJECT_NAME}部署成功",
+            "desc": "版本：'${CI_COMMIT_TAG}'"
+          },
+          "source": {
+            "icon_url": "https://wework.qpic.cn/wwpic/252813_jOfDHtcISzuodLa_1629280209/0",
+            "desc": "部署人：@${GITLAB_USER_NAME}",
+            "desc_color": 0
+          },
+          "sub_title_text": "版本信息：${CI_COMMIT_TAG_MESSAGE} ${CI_COMMIT_MESSAGE}",
+          "card_type": "text_notice",
+          "card_action": {
+            "type": 1,
+            "url": "http://47.94.239.198:1086/front/sf-screen-vue3/-/pipelines"
+          }
+        }
+      }
+      JSON
+      )
+    - echo "$PAYLOAD"
+    - |
+      curl -X "POST" "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=05da0775-c1f6-4d60-aa7f-044d753c0fd0" \
+      -H 'Content-Type: application/json' \
+      --data-binary "${PAYLOAD}"
+
+notify_failure:
+  stage: notify
+  when: on_failure
+  script:
+    - echo '${CI_COMMIT_MESSAGE}'
+    - |-
+      PAYLOAD=$(cat << JSON
+      {
+        "msgtype": "template_card",
+        "template_card": {
+          "main_title": {
+            "title": "⚠️项目：${CI_PROJECT_NAME}部署失败",
+            "desc": "版本：'${CI_COMMIT_SHORT_SHA}'"
+          },
+          "source": {
+            "icon_url": "https://wework.qpic.cn/wwpic/252813_jOfDHtcISzuodLa_1629280209/0",
+            "desc": "部署人：@${GITLAB_USER_NAME}",
+            "desc_color": 0
+          },
+          "sub_title_text": "最后一次提交信息：${CI_COMMIT_MESSAGE}",
+          "card_type": "text_notice",
+          "card_action": {
+            "type": 1,
+            "url": "http://47.94.239.198:1086/front/sf-screen-vue3/-/pipelines"
+          }
+        }
+      }
+      JSON
+      )
+    - echo "$PAYLOAD"
+    - |
+      curl -X "POST" "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=05da0775-c1f6-4d60-aa7f-044d753c0fd0" \
+      -H 'Content-Type: application/json' \
+      --data-binary "${PAYLOAD}"
