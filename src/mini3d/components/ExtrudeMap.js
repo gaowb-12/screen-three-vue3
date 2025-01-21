@@ -7,8 +7,9 @@ import {
   Object3D,
   Shape,
   ExtrudeGeometry,
-  MeshBasicMaterial,
+  MeshBasicMaterial
 } from "three"
+import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { transfromMapGeoJSON } from "@/mini3d"
 import { geoMercator } from "d3-geo"
 export class ExtrudeMap {
@@ -51,6 +52,7 @@ export class ExtrudeMap {
   create(mapData) {
     mapData.features.forEach((feature) => {
       const group = new Object3D()
+      let geometrys = []
 
       let { name, center = [], centroid = [] } = feature.properties
       this.coordinates.push({ name, center, centroid })
@@ -77,11 +79,16 @@ export class ExtrudeMap {
           }
 
           const geometry = new ExtrudeGeometry(shape, extrudeSettings)
-          const mesh = new Mesh(geometry, materials)
-
-          group.add(mesh)
+          // const mesh = new Mesh(geometry, materials)
+          // group.add(mesh)
+          geometrys.push(geometry)
         })
       })
+      // 合并几何体
+      const mergedGeometry = mergeGeometries(geometrys);
+      const mesh = new Mesh(mergedGeometry, this.config.sideMaterial)
+
+      group.add(mesh)
       this.mapGroup.add(group)
     })
   }
