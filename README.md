@@ -1,4 +1,5 @@
-
+## 预览
+<img width="100%" align="center" src="./sceen-shoot.png">
 ## 项目依赖
 
 1. [Vue 官方文档](https://cn.vuejs.org/)
