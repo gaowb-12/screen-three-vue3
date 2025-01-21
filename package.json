@@ -10,16 +10,13 @@
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit"
   },
+  "keywords": ["大屏","地图下钻","threejs","vue3"],
   "dependencies": {
-    "@tweenjs/tween.js": "^25.0.0",
     "autofit.js": "3.1.0",
     "axios": "^1.6.8",
-    "countup.js": "^2.8.0",
     "d3-geo": "3.1.0",
     "dayjs": "^1.11.10",
-    "delaunator": "5.0.0",
     "echarts": "^5.5.0",
-    "echarts-gl": "^2.0.9",
     "element-plus": "^2.6.2",
     "gsap": "3.12.2",
     "lodash-es": "^4.17.21",
