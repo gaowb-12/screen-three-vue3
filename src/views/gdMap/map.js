@@ -330,6 +330,13 @@ export class World extends Mini3d {
     pointLight.position.set(pointParams.x, pointParams.y, pointParams.z)
     this.scene.add(pointLight)
   }
+  getObjectNumFromScene(){
+    let num = 0;
+    this.scene.traverse(child=>{
+      child.isMesh ? num++ : null
+    })
+    console.log(`---当前的场景有多少物体数量：${num}---`,this.scene)
+  }
   createMap() {
     let mapGroup = new Group()
     let focusMapGroup = new Group()
@@ -359,11 +366,7 @@ export class World extends Mini3d {
     
     // 创建轮廓
     this.createStorke()
-    // let num = 0;
-    // this.scene.traverse(child=>{
-    //   child.isMesh ? num++ : null
-    // })
-    // console.log(`---当前的场景有多少物体数量：${num}---`,this.scene)
+    this.getObjectNumFromScene()
   }
   createProvince() {
     let mapJsonData = this.assets.instance.getResource(this.mapName)
@@ -577,11 +580,7 @@ export class World extends Mini3d {
     // 创建地图轮廓描边
     this.createStorke()
     this.initToggleAnimate()
-    // let num = 0;
-    // this.scene.traverse(child=>{
-    //   child.isMesh ? num++ : null
-    // })
-    // console.log(`---当前的场景有多少物体数量：${num}---`,this.scene)
+    this.getObjectNumFromScene()
   }
   removeRelatedEvent(){
     // 移出精灵图事件
